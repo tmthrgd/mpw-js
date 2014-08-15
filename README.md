@@ -1,7 +1,7 @@
 mpw-js
 ======
 
-mpw-js is a JavaScript + Web Crypto implementation of the Master Password App Lyndir/MasterPassword@caab474355ee33ee18c0a1f142f58676819644e8 algorithm <http://masterpasswordapp.com/algorithm.html>.
+mpw-js is a JavaScript + Web Crypto implementation of the Master Password App [Lyndir/MasterPassword](https://github.com/Lyndir/MasterPassword) algorithm (<http://masterpasswordapp.com/algorithm.html>).
 
 mpw-js relies heavily on `window.crypto.subtle` and will only work on a modern browser. It is written in ES6 JS but is transpiled to ES5 JS for browsers that do not yet support ES6 JS. It is purely intended as a proof-of-concept.
 
