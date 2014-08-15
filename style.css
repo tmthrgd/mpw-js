@@ -106,3 +106,7 @@ input[type=checkbox]:hover, input[type=checkbox]:active:hover {
 input:invalid {
 	border-color: #c00;
 }
+
+img {
+	border: none;
+}
