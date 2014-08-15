@@ -5,7 +5,7 @@ mpw-js is a JavaScript + Web Crypto implementation of the Master Password App ([
 
 mpw-js relies heavily on `window.crypto.subtle` and will only work on a modern browser. It is written in ES6 JS but is transpiled to ES5 JS for browsers that do not yet support ES6 JS. It is purely intended as a proof-of-concept.
 
-The `MPW` constructor `constructor(name, password)` it accepts two mandatory arguments, after `.name` is set to name, both name and password are passed to `calculateKey`, `.key` being set to the result.
+The `MPW` constructor `constructor(name, password)` accepts two mandatory arguments; `.name` is set to the argument `name` and both `name` and `password` are subsequently passed to `calculateKey`, `.key` being set to the result.
 
 The `MPW` class implements `static calculateKey(name, password)` which is an implementation of step 1 of the algorithm, *Calculate the __master key__ from a user's name and master password*, it accepts two mandatory arguments, the users full name and the users master password; `calculateKey` is invoked automatically by the constructor.
 
