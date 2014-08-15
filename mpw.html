@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Master Password</title>
+	<link rel=stylesheet href=style.css>
+</head>
+<body>
+	<header class=page-header>
+		<h1>Master Password &ndash; <code>mpw.js</code></h1>
+	</header>
+	
+	<main class=page-body>	
+		<div class=ui>
+			<h2>User Input</h2>
+			
+			<p><label>Full name: <input disabled name=fullname required placeholder="John Smith"></label></p>
+			
+			<p><label>Master Password: <input disabled name=masterpassword required type=password placeholder=Password></label></p>
+			
+			<p><label>Site: <input disabled name=site required placeholder=example.com></label></p>
+			
+			<!--<p><label>Counter: <input disabled name=counter required type=number min=0 max=4294967295 value=0></label></p>-->
+			<p><label>Counter: <input disabled name=counter required type=number min=0 max=2147483647 value=0></label></p>
+			
+			<p><label>
+				Template:
+				<select disabled name=template required>
+					<option value=maximum>Maximum</option>
+					<option value=long selected>Long</option>
+					<option value=medium>Medium</option>
+					<option value=short>Short</option>
+					<option value=basic>Basic</option>
+					<option value=pin>PIN</option>
+				</select>
+			</label></p>
+		</div>
+		
+		<div class=result>
+			<h2>Generated Password</h2>
+			
+			<p><label>Password: <input disabled class=password readonly placeholder=Password></label></p>
+			
+			<p>Error: <code class=error><noscript>You must have JavaScript enabled for this page to work.</noscript></code></p>
+		</div>
+	</main>
+	
+	<footer class=page-footer>
+		<h2>License</h2>
+		
+		<pre>mpw.js is written by <a href=http://tomthorogood.co.uk>Tom Thorogood</a> &lt;<a href=mailto:me@tomthorogood.co.uk>me@tomthorogood.co.uk</a>&gt;
+and is open source software released into the public domain,
+explicitly relinquishing all rights over it.
+
+mpw.js is a JavaScript + Web Crypto implementation of the Master Password App
+algorithm &lt;<a href=http://masterpasswordapp.com/algorithm.html>http://masterpasswordapp.com/algorithm.html</a>&gt;.
+
+mpw.js relies on `js-scrypt`, which is written by Tony Garnock-Jones
+&lt;<a href=mailto:tonygarnockjones@gmail.com>tonygarnockjones@gmail.com</a>&gt; and is licensed under the <a href=http://opensource.org/licenses/BSD-2-Clause>2-clause BSD license</a> as follows:
+
+> Copyright &copy; 2013, Tony Garnock-Jones  
+> All rights reserved.
+>
+> Redistribution and use in source and binary forms, with or without
+> modification, are permitted provided that the following conditions
+> are met:
+>
+> 1. Redistributions of source code must retain the above copyright
+>    notice, this list of conditions and the following disclaimer.
+>
+> 2. Redistributions in binary form must reproduce the above copyright
+>    notice, this list of conditions and the following disclaimer in
+>    the documentation and/or other materials provided with the
+>    distribution.
+>
+> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+> "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+> LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+> FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+> COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+> INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+> BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+> LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+> CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+> LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+> ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+> POSSIBILITY OF SUCH DAMAGE.
+
+js-scrypt relies on `scrypt` itself, which is written by Colin
+Percival and licensed as follows:
+
+> Copyright 2009 Colin Percival  
+> All rights reserved.
+>
+> Redistribution and use in source and binary forms, with or without
+> modification, are permitted provided that the following conditions
+> are met:
+>
+> 1. Redistributions of source code must retain the above copyright
+>    notice, this list of conditions and the following disclaimer.
+> 2. Redistributions in binary form must reproduce the above copyright
+>    notice, this list of conditions and the following disclaimer in the
+>    documentation and/or other materials provided with the distribution.
+>
+> THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+> ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+> IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+> ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+> FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+> DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+> OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+> HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+> LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+> OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+> SUCH DAMAGE.</pre>
+	</footer>
+	
+	<script>
+	try {
+		eval("class $ES6 { constructor() { let b = true; this.b = b; } } var [ES6, suffix] = ((...args) => args)(new $ES6().b, '.js')");
+	} catch (e) {
+		var ES6 = false;
+		var suffix = ".es5.js";
+	}
+	
+	ES6 || document.write("<script src=traceur-runtime.js><\/script>");
+	window.setImmediate || document.write("<script src=setImmediate-polyfill" + suffix + "><\/script>");
+	document.write("<script src=scrypt" + suffix + "><\/script>");
+	document.write("<script src=mpw" + suffix + "><\/script>");
+	document.write("<script src=manager" + suffix + "><\/script>");
+	</script>
+</body>
+</html>

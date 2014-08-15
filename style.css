@@ -1,0 +1,108 @@
+.error {
+	color:red;
+}
+
+html {
+	background: #f0f0f0;
+	font: 85%/1.5em "Segoe UI", Helvetica, Arial, serif;
+	padding: 0 1em;
+}
+
+body {
+	background: #fff;
+	border: 1px solid #a0a0a0;
+	border-radius: 1em;
+	margin: 4em auto;
+	padding: 3em;
+	width: 60em;
+}
+
+body > :first-child {
+	margin-top: 0;
+}
+
+body > :last-child {
+	margin-bottom: 0;
+}
+
+.page-header h1 {
+	margin: 0;
+}
+
+.ui, .result {
+	margin: 1.25em 0 0;
+	padding: 1em 0 0;
+}
+
+.ui, .result, .page-footer {
+	border-top: 1px dashed #333;
+}
+
+.ui > :first-child, .result > :first-child, .page-footer > :first-child {
+	margin-top: 0;
+}
+
+textarea, input[type=text] {
+	display:block;
+	width:100%;
+}
+
+label {
+	display:block;
+}
+
+.page-footer {
+	margin: 1.25em 0 0;
+	padding: 1em 0 0;
+}
+
+.page-footer > :only-child {
+	margin: 0;
+}
+
+textarea {
+	background: #fafafa;
+	border: 1px solid #abaaaa;
+	max-width: 100%;
+	resize: both;
+}
+
+textarea:hover {
+	background: #fcfcfc;
+}
+
+input, select {
+	background: #fafafa;
+	border: 1px solid #abaaaa;
+	border-radius: 0;
+	padding: 1px 2px;
+}
+
+input:hover, select:hover {
+	background: #fcfcfc;
+}
+
+input[type=button] {
+	padding: 0 0.5em;
+	margin: 1em 0 0;
+}
+
+input[type=button]:active:hover {
+	padding: 0 0.5em;
+	outline: 1px solid #abaaaa;
+}
+
+input[type=checkbox] {
+	margin: 0;
+	vertical-align: sub;
+}
+
+input[type=checkbox]:hover, input[type=checkbox]:active:hover {
+	background: none;
+	padding: 0;
+	outline: none;
+}
+
+input:invalid {
+	border-color: #c00;
+}
