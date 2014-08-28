@@ -5,7 +5,7 @@ function updateMPW() {
 	
 	if (!fullname.value ||
 		!masterpassword.value ||
-	    !fullname.validity.valid ||
+		!fullname.validity.valid ||
 		!masterpassword.validity.valid) {
 		return mpw = null;
 	}
@@ -64,4 +64,8 @@ window.addEventListener("load", function () {
 	sitename.addEventListener("input", updatePassword, false);
 	counter.addEventListener("input", updatePassword, false);
 	template.addEventListener("change", updatePassword, false);
+	
+	MPW.test().catch(function () {
+		error.textContent = "Self-test failed."
+	});
 }, false);

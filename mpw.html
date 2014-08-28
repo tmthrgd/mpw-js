@@ -116,17 +116,34 @@ Percival and licensed as follows:
 	</footer>
 	
 	<script>
+	// Test for required ES6 features
+	// This test must be in an eval call as they are language
+	// features and ES5 parsers will hard-fail otherwise
 	try {
+		// If the ES6 class, let, destructive assignment and rest arguments
+		// are supported, this will be successful and ES6 will be set to true
+		// and suffix to ".js"
 		eval("class $ES6 { constructor() { let b = true; this.b = b; } } var [ES6, suffix] = ((...args) => args)(new $ES6().b, '.js')");
 	} catch (e) {
+		// If the needed ES6 features aren't supported, ES6 will be set to false
+		// and suffix to ".es5.js"
 		var ES6 = false;
 		var suffix = ".es5.js";
 	}
 	
+	// If ES6 is not supported we must include traceur-runtime.js
 	ES6 || document.write("<script src=traceur-runtime.js><\/script>");
+	
+	// If setImmediate is not implemented we include the polyfill
 	window.setImmediate || document.write("<script src=setImmediate-polyfill" + suffix + "><\/script>");
+	
+	// Include the scrypt implementation
 	document.write("<script src=scrypt" + suffix + "><\/script>");
+	
+	// Include the MPW class
 	document.write("<script src=mpw" + suffix + "><\/script>");
+	
+	// manager.js handles this demo
 	document.write("<script src=manager" + suffix + "><\/script>");
 	</script>
 </body>
