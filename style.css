@@ -56,8 +56,8 @@ label {
 	padding: 1em 0 0;
 }
 
-.page-footer > :only-child {
-	margin: 0;
+.page-footer > :last-child {
+	margin-bottom: 0;
 }
 
 textarea {
