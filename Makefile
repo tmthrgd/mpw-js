@@ -1,4 +1,4 @@
-TRACEFLAGS=--experimental --sourcemap
+TRACEFLAGS=--experimental --source-maps file
 NODE_PREFIX=$(shell npm config get prefix)
 
 all: traceur-runtime.js setImmediate-polyfill.es5.js scrypt.es5.js mpw.es5.js manager.es5.js
