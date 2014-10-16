@@ -1,8 +1,9 @@
 TRACEFLAGS=--experimental --sourcemap
+NODE_PREFIX=$(shell npm config get prefix)
 
 all: traceur-runtime.js setImmediate-polyfill.es5.js scrypt.es5.js mpw.es5.js manager.es5.js
 
-traceur-runtime.js: /usr/lib/node_modules/traceur/bin/traceur-runtime.js
+traceur-runtime.js: ${NODE_PREFIX}/lib/node_modules/traceur/bin/traceur-runtime.js
 	cp $< $@
 
 setImmediate-polyfill.es5.js: setImmediate-polyfill.js

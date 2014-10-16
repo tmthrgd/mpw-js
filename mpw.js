@@ -1,10 +1,10 @@
-// TextEncoder in UTF-8
+// A TextEncoder in UTF-8 to convert strings to `Uint8Array`s
 const txtencoder = new TextEncoder;
 
 // JS Web Crypto implementation of http://masterpasswordapp.com/algorithm.html
 class MPW {
 	constructor(name, password) {
-		// Store name on the object, this is not used internally
+		// Store name on the object, this is not used at all internally
 		this.name = name;
 		
 		// Calculate the master key which will be used to calculate
@@ -51,7 +51,7 @@ class MPW {
 		
 		// Derive the master key w/ scrypt
 		// why is buflen 64*8==512 and not 32*8==256 ?
-		return window.scrypt(password, salt, 32768, 8, 2, 64).then(
+		return window.scrypt(password, salt, 32768/*= n*/, 8/*= r*/, 2/*= p*/, 64/*= buflen*/).then(
 			// Import the key into WebCrypto to use later with sign while being non-extractable
 			key => window.crypto.subtle.importKey("raw", key, {
 				name: "HMAC",

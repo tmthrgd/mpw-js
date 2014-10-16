@@ -1,19 +1,21 @@
 window.scrypt = function () {
-	// 1MiB, the default 32MiB caused errors for unknown reasons
-	const SCRYPT_MEMORY = 1024 * 1024 * 1024;
+	// 512MiB, the default 32MiB caused errors for unknown reasons
+	const SCRYPT_MEMORY = 512 * 1024 * 1024;
 	
 	try {
-		// Script tags the latest one is used to resolve scrypt-asm.js
+		// Get all the <script> tags the latest one is used to resolve
+		// scrypt-asm.js, it will be the currently executing <script> tag,
+		// so long as defer and async were NOT used
 		let scripts = document.getElementsByTagName("script");
 		
 		// Create a WebWorker using a blob: url create from a function converted toString
 		// This saves uses a third-file for scrypt but is slightly hack-y
 		// It is a self-invoking anonymous function
 		let scryptwrkr = new Worker(URL.createObjectURL(new Blob([ ("!" + function () {
-			// 1MiB, the default 32MiB caused errors for unknown reasons
+			// 512MiB, the default 32MiB caused errors for unknown reasons
 			// Have to redeclare here as definition above is not accessible
 			// from WebWorker
-			const SCRYPT_MEMORY = 1024 * 1024 * 1024;
+			const SCRYPT_MEMORY = 512 * 1024 * 1024;
 			
 			// Import scrypt-asm.js which is scrypt.c compiled w/ Emscripten
 			// {{scrypt-asm.js}} is a placeholder for the full path to scrypt-asm.js
