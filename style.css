@@ -29,16 +29,16 @@ body > :last-child {
 	margin: 0;
 }
 
-.ui, .result {
+.user, .site, .result {
 	margin: 1.25em 0 0;
 	padding: 1em 0 0;
 }
 
-.ui, .result, .page-footer {
+.user, .site, .result, .page-footer {
 	border-top: 1px dashed #333;
 }
 
-.ui > :first-child, .result > :first-child, .page-footer > :first-child {
+.user > :first-child, .site > :first-child, .result > :first-child, .page-footer > :first-child {
 	margin-top: 0;
 }
 

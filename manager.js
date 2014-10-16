@@ -43,6 +43,7 @@ function updatePassword() {
 window.addEventListener("load", function () {
 	fullname       = document.querySelector("[name=fullname]");
 	masterpassword = document.querySelector("[name=masterpassword]");
+	calculatekey   = document.querySelector("[name=calculatekey]");
 	sitename       = document.querySelector("[name=site]");
 	counter        = document.querySelector("[name=counter]");
 	template       = document.querySelector("[name=template]");
@@ -54,12 +55,10 @@ window.addEventListener("load", function () {
 		return;
 	}
 	
-	fullname.disabled = masterpassword.disabled = sitename.disabled = counter.disabled = template.disabled = password.disabled = false;
+	fullname.disabled = masterpassword.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = template.disabled = password.disabled = false;
 	
 	updateMPW();
-	
-	fullname.addEventListener("input", updateMPW, false);
-	masterpassword.addEventListener("input", updateMPW, false);
+	calculatekey.addEventListener("click", updateMPW, false);
 	
 	sitename.addEventListener("input", updatePassword, false);
 	counter.addEventListener("input", updatePassword, false);
