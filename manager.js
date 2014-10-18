@@ -64,7 +64,8 @@ window.addEventListener("load", function () {
 	counter.addEventListener("input", updatePassword, false);
 	template.addEventListener("change", updatePassword, false);
 	
-	MPW.test().catch(function () {
-		error.textContent = "Self-test failed."
+	MPW.test().catch(function (err) {
+		console.error(err);
+		error.textContent = err.toString();
 	});
 }, false);

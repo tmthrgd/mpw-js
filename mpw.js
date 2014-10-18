@@ -148,9 +148,11 @@ class MPW {
 	
 	static test() {
 		// Pretty simple test here
-		return new MPW("0123456789ABCDEF", "0123456789ABCDEF").generate("example.com", 0, "long").then(function (password) {
-			console.assert(password === "JajuFeyzRafw4!", "Self-test failed; result:", password, "expected: JajuFeyzRafw4!");
-			return password === "JajuFeyzRafw4!" ? Promise.resolve() : Promise.reject();
+		return new MPW("user", "password").generate("example.com", 0, "long").then(function (password) {
+			console.assert(password === "KezpWado2+Fazo", "Self-test failed; expected: KezpWado2+Fazo; got: " + password);
+			return password === "KezpWado2+Fazo"
+				? Promise.resolve()
+				: Promise.reject(new Error("Self-test failed; expected: KezpWado2+Fazo; got: " + password));
 		});
 	}
 }
