@@ -40,10 +40,19 @@
 					<option value=pin>PIN</option>
 				</select>
 			</label></p>
+			
+			<p><label>
+				Type:
+				<select disabled name=type required>
+					<option value=login>Username</option>
+					<option value=password selected>Password</option>
+					<option value=answer>Security Answer</option>
+				</select>
+			</label></p>
 		</div>
 		
 		<div class=result>
-			<h2>Generated Password</h2>
+			<h2>Generated <span class=resulttype>Password</span></h2>
 			
 			<p><label>Password: <input disabled class=password readonly placeholder=Password></label></p>
 			

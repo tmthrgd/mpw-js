@@ -1,4 +1,4 @@
-let mpw, fullname, masterpassword, sitename, counter, template, password, error, id = 0;
+let mpw, fullname, masterpassword, sitename, counter, template, type, resulttype, password, error, id = 0;
 
 function updateMPW() {
 	error.textContent = password.value = "";
@@ -21,13 +21,16 @@ function updatePassword() {
 	if (!mpw || !sitename.value ||
 		!sitename.validity.valid ||
 		!counter.validity.valid ||
-		!template.validity.valid) {
+		!template.validity.valid ||
+		!type.validity.valid) {
 		return;
 	}
 	
 	let cid = ++id;
 	
-	mpw.generate(sitename.value, counter.valueAsNumber, template.value).then(function (pass) {
+	let Type = type.value[0].toUpperCase() + type.value.slice(1).toLowerCase();
+	
+	mpw["generate" + Type](sitename.value, counter.valueAsNumber, template.value).then(function (pass) {
 		if (cid === id) {
 			password.value = pass;
 		}
@@ -40,6 +43,10 @@ function updatePassword() {
 	});
 }
 
+function updateType() {
+	resulttype.textContent = type.selectedOptions[0].textContent;
+}
+
 window.addEventListener("load", function () {
 	fullname       = document.querySelector("[name=fullname]");
 	masterpassword = document.querySelector("[name=masterpassword]");
@@ -47,6 +54,8 @@ window.addEventListener("load", function () {
 	sitename       = document.querySelector("[name=site]");
 	counter        = document.querySelector("[name=counter]");
 	template       = document.querySelector("[name=template]");
+	type           = document.querySelector("[name=type]");
+	resulttype     = document.querySelector(".resulttype");
 	password       = document.querySelector(".password");
 	error          = document.querySelector(".error");
 	
@@ -55,7 +64,7 @@ window.addEventListener("load", function () {
 		return;
 	}
 	
-	fullname.disabled = masterpassword.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = template.disabled = password.disabled = false;
+	fullname.disabled = masterpassword.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = template.disabled = type.disabled = password.disabled = false;
 	
 	updateMPW();
 	calculatekey.addEventListener("click", updateMPW, false);
@@ -63,6 +72,10 @@ window.addEventListener("load", function () {
 	sitename.addEventListener("input", updatePassword, false);
 	counter.addEventListener("input", updatePassword, false);
 	template.addEventListener("change", updatePassword, false);
+	type.addEventListener("change", updatePassword, false);
+	
+	updateType();
+	type.addEventListener("change", updateType, false);
 	
 	MPW.test().catch(function (err) {
 		console.error(err);

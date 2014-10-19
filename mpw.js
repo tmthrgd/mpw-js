@@ -63,7 +63,7 @@ class MPW {
 	}
 	
 	// calculateSeed takes ~ 3.000ms to complete + the time of calculateKey once
-	calculateSeed(site, counter = 0) {
+	calculateSeed(site, counter = 0, NS = MPW.NS) {
 		if (!site) {
 			return Promise.reject(new Error("Argument site not present"));
 		}
@@ -76,8 +76,8 @@ class MPW {
 			// Convert salt string to a Uint8Array w/ UTF-8
 			site = txtencoder.encode(site);
 			
-			// Convert MPW.NS string to a Uint8Array w/ UTF-8
-			let NS = txtencoder.encode(MPW.NS);
+			// Convert NS string to a Uint8Array w/ UTF-8
+			NS = txtencoder.encode(NS);
 			
 			// Create data array and a dataView representing it
 			var data     = new Uint8Array(NS.length + 4/*sizeof(uint32)*/ + site.length + 4/*sizeof(uint32)*/);
@@ -111,14 +111,14 @@ class MPW {
 	}
 	
 	// generate takes ~ 0.200ms to complete + the time of calculateSeed
-	generate(site, counter = 0, template = "long") {
+	generate(site, counter = 0, template = "long", NS = MPW.NS) {
 		// Does the requested template exist?
 		if (!(template in MPW.templates)) {
 			return Promise.reject(new Error("Argument template invalid"));
 		}
 		
 		// Calculate the seed
-		return this.calculateSeed(site, counter).then(function (seed) {
+		return this.calculateSeed(site, counter, NS).then(function (seed) {
 			// Convert the seed to Uint8Array from ArrayBuffer
 			seed = new Uint8Array(seed);
 			
@@ -140,6 +140,21 @@ class MPW {
 		})/*= password*/;
 	}
 	
+	// generate a password with the password namespace
+	generatePassword(site, counter = 0, template = "long") {
+		return this.generate(site, counter, template, MPW.PasswordNS);
+	}
+	
+	// generate a username with the login namespace
+	generateLogin(site, counter = 0, template = "long") {
+		return this.generate(site, counter, template, MPW.LoginNS);
+	}
+	
+	// generate a security answer with the answer namespace
+	generateAnswer(site, counter = 0, template = "long") {
+		return this.generate(site, counter, template, MPW.AnswerNS);
+	}
+	
 	invalidate() {
 		// Replace this.key w/ a Promise.reject
 		// Preventing all future access
@@ -157,8 +172,13 @@ class MPW {
 	}
 }
 
-// The namespace used in calculateKey and calculateSeed
+// The namespace used in calculateKey
 MPW.NS = "com.lyndir.masterpassword";
+
+// The namespaces used in calculateSeed
+MPW.PasswordNS = "com.lyndir.masterpassword";
+MPW.LoginNS = "com.lyndir.masterpassword.login";
+MPW.AnswerNS = "com.lyndir.masterpassword.answer";
 
 // The templates that passwords may be created from
 // The characters map to MPW.passchars
