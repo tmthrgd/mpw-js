@@ -112,7 +112,7 @@ class MPW {
 				// Set data[i,i+4] to context.length UINT32 in big-endian form
 				dataView.setUint32(i, context.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
 				
-				// Set data[i,] to site
+				// Set data[i,] to context
 				data.set(context, i); i += context.length;
 			}
 		} catch (e) {
@@ -197,8 +197,8 @@ MPW.NS = "com.lyndir.masterpassword";
 
 // The namespaces used in calculateSeed
 MPW.PasswordNS = "com.lyndir.masterpassword";
-MPW.LoginNS = "com.lyndir.masterpassword.login";
-MPW.AnswerNS = "com.lyndir.masterpassword.answer";
+MPW.LoginNS    = "com.lyndir.masterpassword.login";
+MPW.AnswerNS   = "com.lyndir.masterpassword.answer";
 
 // The templates that passwords may be created from
 // The characters map to MPW.passchars
