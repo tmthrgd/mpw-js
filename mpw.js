@@ -63,7 +63,7 @@ class MPW {
 	}
 	
 	// calculateSeed takes ~ 3.000ms to complete + the time of calculateKey once
-	calculateSeed(site, counter = 0, NS = MPW.NS) {
+	calculateSeed(site, counter = 0, context = null, NS = MPW.NS) {
 		if (!site) {
 			return Promise.reject(new Error("Argument site not present"));
 		}
@@ -79,8 +79,20 @@ class MPW {
 			// Convert NS string to a Uint8Array w/ UTF-8
 			NS = txtencoder.encode(NS);
 			
+			if (context) {
+				// Convert context string to a Uint8Array w/ UTF-8
+				context = txtencoder.encode(context);
+			}
+			
 			// Create data array and a dataView representing it
-			var data     = new Uint8Array(NS.length + 4/*sizeof(uint32)*/ + site.length + 4/*sizeof(uint32)*/);
+			var data = new Uint8Array(
+				NS.length
+				+ 4/*sizeof(uint32)*/ + site.length
+				+ 4/*sizeof(uint32)*/
+				+ (context
+					? 4/*sizeof(uint32)*/ + context.length
+					: 0)
+			);
 			let dataView = new DataView(data.buffer);
 			let i = 0;
 			
@@ -94,7 +106,15 @@ class MPW {
 			data.set(site, i); i += site.length;
 			
 			// Set data[i,i+4] to counter UINT32 in big-endian form
-			dataView.setUint32(i, counter, false/*big-endian*/); i += 4/*sizeof(uint32)*/;	
+			dataView.setUint32(i, counter, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			
+			if (context) {
+				// Set data[i,i+4] to context.length UINT32 in big-endian form
+				dataView.setUint32(i, context.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+				
+				// Set data[i,] to site
+				data.set(context, i); i += context.length;
+			}
 		} catch (e) {
 			return Promise.reject(e);
 		}
@@ -111,14 +131,14 @@ class MPW {
 	}
 	
 	// generate takes ~ 0.200ms to complete + the time of calculateSeed
-	generate(site, counter = 0, template = "long", NS = MPW.NS) {
+	generate(site, counter = 0, context = null, template = "long", NS = MPW.NS) {
 		// Does the requested template exist?
 		if (!(template in MPW.templates)) {
 			return Promise.reject(new Error("Argument template invalid"));
 		}
 		
 		// Calculate the seed
-		return this.calculateSeed(site, counter, NS).then(function (seed) {
+		return this.calculateSeed(site, counter, context, NS).then(function (seed) {
 			// Convert the seed to Uint8Array from ArrayBuffer
 			seed = new Uint8Array(seed);
 			
@@ -142,17 +162,17 @@ class MPW {
 	
 	// generate a password with the password namespace
 	generatePassword(site, counter = 0, template = "long") {
-		return this.generate(site, counter, template, MPW.PasswordNS);
+		return this.generate(site, counter, null, template, MPW.PasswordNS);
 	}
 	
 	// generate a username with the login namespace
-	generateLogin(site, counter = 0, template = "long") {
-		return this.generate(site, counter, template, MPW.LoginNS);
+	generateLogin(site, counter = 0, template = "name") {
+		return this.generate(site, counter, null, template, MPW.LoginNS);
 	}
 	
 	// generate a security answer with the answer namespace
-	generateAnswer(site, counter = 0, template = "long") {
-		return this.generate(site, counter, template, MPW.AnswerNS);
+	generateAnswer(site, counter = 0, context = "", template = "phrase") {
+		return this.generate(site, counter, context, template, MPW.AnswerNS);
 	}
 	
 	invalidate() {
@@ -163,7 +183,7 @@ class MPW {
 	
 	static test() {
 		// Pretty simple test here
-		return new MPW("user", "password").generate("example.com", 0, "long").then(function (password) {
+		return new MPW("user", "password").generate("example.com", 0, null, "long", MPW.NS).then(function (password) {
 			console.assert(password === "KezpWado2+Fazo", "Self-test failed; expected: KezpWado2+Fazo; got: " + password);
 			return password === "KezpWado2+Fazo"
 				? Promise.resolve()
@@ -214,16 +234,24 @@ MPW.templates = {
 		"CvcnoCvc",
 		"CvcCvcno"
 	],
-	short: [
-		"Cvcn"
-	],
 	basic: [
 		"aaanaaan",
 		"aannaaan",
 		"aaannaaa"
 	],
+	short: [
+		"Cvcn"
+	],
 	pin: [
 		"nnnn"
+	],
+	name: [
+		"cvccvcvcv"
+	],
+	phrase: [
+		"cvcc cvc cvccvcv cvc",
+		"cvc cvccvcvcv cvcv",
+		"cv cvccv cvc cvcvccv"
 	]
 };
 
@@ -238,5 +266,6 @@ MPW.passchars = {
 	a: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz",
 	n: "0123456789",
 	o: "@&%?,=[]_:-+*$#!'^~;()/.",
-	x: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz0123456789@&%?,=[]_:-+*$#!'^~;()/."
+	x: "AEIOUaeiouBCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz0123456789@&%?,=[]_:-+*$#!'^~;()/.",
+	" ": " "
 };

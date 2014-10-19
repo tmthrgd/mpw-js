@@ -1,4 +1,4 @@
-let mpw, fullname, masterpassword, sitename, counter, template, type, resulttype, password, error, id = 0;
+let mpw, fullname, masterpassword, sitename, counter, context, template, type, resulttype, password, error, id = 0;
 
 function updateMPW() {
 	error.textContent = password.value = "";
@@ -28,9 +28,15 @@ function updatePassword() {
 	
 	let cid = ++id;
 	
-	let Type = type.value[0].toUpperCase() + type.value.slice(1).toLowerCase();
+	if (type.value === "answer") {
+		var value = mpw.generateAnswer(sitename.value, counter.valueAsNumber, context.value, template.value);
+	} else {
+		let Type = type.value[0].toUpperCase() + type.value.slice(1).toLowerCase();
+		
+		var value = mpw["generate" + Type](sitename.value, counter.valueAsNumber, template.value);
+	}
 	
-	mpw["generate" + Type](sitename.value, counter.valueAsNumber, template.value).then(function (pass) {
+	value.then(function (pass) {
 		if (cid === id) {
 			password.value = pass;
 		}
@@ -45,6 +51,22 @@ function updatePassword() {
 
 function updateType() {
 	resulttype.textContent = type.selectedOptions[0].textContent;
+	
+	context.disabled = type.value !== "answer";
+	
+	switch (type.value) {
+		case "login":
+			template.value = "name";
+			break;
+		case "password":
+			template.value = "long";
+			break;
+		case "answer":
+			template.value = "phrase";
+			break;
+	}
+	
+	updatePassword();
 }
 
 window.addEventListener("load", function () {
@@ -53,6 +75,7 @@ window.addEventListener("load", function () {
 	calculatekey   = document.querySelector("[name=calculatekey]");
 	sitename       = document.querySelector("[name=site]");
 	counter        = document.querySelector("[name=counter]");
+	context        = document.querySelector("[name=context]");
 	template       = document.querySelector("[name=template]");
 	type           = document.querySelector("[name=type]");
 	resulttype     = document.querySelector(".resulttype");
@@ -71,6 +94,7 @@ window.addEventListener("load", function () {
 	
 	sitename.addEventListener("input", updatePassword, false);
 	counter.addEventListener("input", updatePassword, false);
+	context.addEventListener("input", updatePassword, false);
 	template.addEventListener("change", updatePassword, false);
 	type.addEventListener("change", updatePassword, false);
 	
