@@ -53,7 +53,7 @@ window.scrypt = function () {
 					});
 				}
 			}, false);
-		} + "()").replace("{{scrypt-asm.js}}", scripts[scripts.length - 1].src + "/../scrypt-asm.js") ], { type: "application/javascript" })));
+		} + "()").replace("{{scrypt-asm.js}}", window.SCRYPTASM_PATH || (scripts[scripts.length - 1].src + "/../scrypt-asm.js")) ], { type: "application/javascript" })));
 		// This would instead create a WebWorker using a third-file
 		//let scryptwrkr = new Worker("scrypt-worker.js");
 		
@@ -115,7 +115,7 @@ window.scrypt = function () {
 		// Create a new async script tag to add to the DOM
 		// This will 'import' scrypt_module_factory
 		let script = document.createElement("script");
-		script.src = "scrypt-asm.js", script.async = true;
+		script.src = window.SCRYPTASM_PATH || "scrypt-asm.js", script.async = true;
 		
 		// Add an event handler to the script load event to
 		// create the factory as soon as we possibly can
