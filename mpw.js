@@ -140,7 +140,7 @@ class MPW {
 				}, key, data)/*= seed*/
 			).then(
 				// Convert the seed to Uint8Array from ArrayBuffer
-				seed => new Uint8Array(seed)
+				seed => new Uint8Array(seed)/*= seed*/
 			);
 		} else {
 			return this.key.then(function (key) {
@@ -149,7 +149,7 @@ class MPW {
 				key  = CryptoJS.lib.WordArray.create(key);
 				
 				// Sign data using HMAC-SHA-256 w/ key
-				return CryptoJS.HmacSHA256(data, key);
+				return CryptoJS.HmacSHA256(data, key)/*= key*/;
 			}).then(function (hash) {
 				// Create seed array and a DataView representing it
 				let seed     = new Uint8Array(hash.words.length * 4/*sizeof(int32)*/);
