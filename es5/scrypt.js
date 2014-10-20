@@ -31,7 +31,7 @@ window.scrypt = function() {
           });
         }
       }, false);
-    } + "()").replace("{{scrypt-asm.js}}", scripts[$traceurRuntime.toProperty(scripts.length - 1)].src + "/../scrypt-asm.js")], {type: "application/javascript"})));
+    } + "()").replace("{{scrypt-asm.js}}", window.SCRYPTASM_PATH || (scripts[$traceurRuntime.toProperty(scripts.length - 1)].src + "/../scrypt-asm.js"))], {type: "application/javascript"})));
     var scryptID = 1;
     var scryptcbs = {};
     var messageName = ("scrypt-" + Math.random()).replace("0.", "");
@@ -69,7 +69,7 @@ window.scrypt = function() {
     console.error(e);
     var scrypt_module = null;
     var script = document.createElement("script");
-    script.src = "scrypt-asm.js", script.async = true;
+    script.src = window.SCRYPTASM_PATH || "scrypt-asm.js", script.async = true;
     script.addEventListener("load", function() {
       if (!scrypt_module) {
         scrypt_module = scrypt_module_factory(SCRYPT_MEMORY);
