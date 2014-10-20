@@ -142,19 +142,19 @@ Percival and licensed as follows:
 		// If the ES6 class, let, destructive assignment and rest arguments
 		// are supported, this will be successful and ES6 will be set to true
 		// and suffix to ".js"
-		eval("class $ES6 { constructor() { let b = true; this.b = b; } } var [ES6, suffix] = ((...args) => args)(new $ES6().b, '.js')");
+		eval("class $ES6 { constructor() { let b = true; this.b = b; } } var [ES6, esdir] = ((...args) => args)(new $ES6().b, '')");
 	} catch (e) {
 		// If the needed ES6 features aren't supported, ES6 will be set to false
 		// and suffix to ".es5.js"
 		var ES6 = false;
-		var suffix = ".es5.js";
+		var esdir = "es5/";
 	}
 	
 	// If ES6 is not supported we must include traceur-runtime.js
 	ES6 || document.write("<script src=lib/traceur-runtime.js><\/script>");
 	
 	// If setImmediate is not implemented we include the polyfill
-	window.setImmediate || document.write("<script src=lib/setImmediate-polyfill" + suffix + "><\/script>");
+	window.setImmediate || document.write("<script src=lib/" + esdir + "setImmediate-polyfill.js><\/script>");
 	
 	// If Typed Arrays are not supported we include the polyfill
 	// https://github.com/inexorabletash/polyfill
@@ -178,13 +178,14 @@ Percival and licensed as follows:
 	}
 	
 	// Include the scrypt implementation
-	document.write("<script src=lib/scrypt" + suffix + "><\/script>");
+	const SCRYPTASM_PATH = (window.location + '').replace(/\/index.html$/i, '/') + "lib/scrypt-asm.js";
+	document.write("<script src=lib/" + esdir + "scrypt.js><\/script>");
 	
 	// Include the MPW class
-	document.write("<script src=lib/mpw" + suffix + "><\/script>");
+	document.write("<script src=lib/" + esdir + "mpw.js><\/script>");
 	
 	// manager.js handles this demo
-	document.write("<script src=manager" + suffix + "><\/script>");
+	document.write("<script src=" + esdir + "manager.js><\/script>");
 	</script>
 </body>
 </html>
