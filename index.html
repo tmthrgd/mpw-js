@@ -151,10 +151,10 @@ Percival and licensed as follows:
 	}
 	
 	// If ES6 is not supported we must include traceur-runtime.js
-	ES6 || document.write("<script src=traceur-runtime.js><\/script>");
+	ES6 || document.write("<script src=lib/traceur-runtime.js><\/script>");
 	
 	// If setImmediate is not implemented we include the polyfill
-	window.setImmediate || document.write("<script src=setImmediate-polyfill" + suffix + "><\/script>");
+	window.setImmediate || document.write("<script src=lib/setImmediate-polyfill" + suffix + "><\/script>");
 	
 	// If Typed Arrays are not supported we include the polyfill
 	// https://github.com/inexorabletash/polyfill
@@ -178,10 +178,10 @@ Percival and licensed as follows:
 	}
 	
 	// Include the scrypt implementation
-	document.write("<script src=scrypt" + suffix + "><\/script>");
+	document.write("<script src=lib/scrypt" + suffix + "><\/script>");
 	
 	// Include the MPW class
-	document.write("<script src=mpw" + suffix + "><\/script>");
+	document.write("<script src=lib/mpw" + suffix + "><\/script>");
 	
 	// manager.js handles this demo
 	document.write("<script src=manager" + suffix + "><\/script>");
