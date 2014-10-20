@@ -32,9 +32,12 @@ class MPW {
 			// Convert MPW.NS string to a Uint8Array w/ UTF-8
 			let NS = txtencoder.encode(MPW.NS);
 			
-			// Create salt array and a dataView representing it
-			var salt     = new Uint8Array(NS.length + 4/*sizeof(uint32)*/ + name.length);
-			let saltView = new DataView(salt.buffer);
+			// Create salt array and a DataView representing it
+			var salt = new Uint8Array(
+				NS.length
+				+ 4/*sizeof(uint32)*/ + name.length
+			);
+			let saltView = new DataView(salt.buffer, salt.byteOffset, salt.byteLength);
 			let i = 0;
 			
 			// Set salt[0,] to NS
@@ -51,15 +54,21 @@ class MPW {
 		
 		// Derive the master key w/ scrypt
 		// why is buflen 64*8==512 and not 32*8==256 ?
-		return window.scrypt(password, salt, 32768/*= n*/, 8/*= r*/, 2/*= p*/, 64/*= buflen*/).then(
-			// Import the key into WebCrypto to use later with sign while being non-extractable
-			key => window.crypto.subtle.importKey("raw", key, {
-				name: "HMAC",
-				hash: {
-					name: "SHA-256"
-				}
-			}, false/*not extractable*/, [ "sign" ])/*= key*/
-		);
+		let key = window.scrypt(password, salt, 32768/*= n*/, 8/*= r*/, 2/*= p*/, 64/*= buflen*/);
+		
+		// If the Web Crypto API is supported import the key, otherwise return
+		return window.crypto.subtle
+			? key.then(
+				// Import the key into WebCrypto to use later with sign while
+				// being non-extractable
+				key => window.crypto.subtle.importKey("raw", key, {
+					name: "HMAC",
+					hash: {
+						name: "SHA-256"
+					}
+				}, false/*not extractable*/, [ "sign" ])/*= key*/
+			)
+			: key;
 	}
 	
 	// calculateSeed takes ~ 3.000ms to complete + the time of calculateKey once
@@ -84,7 +93,7 @@ class MPW {
 				context = txtencoder.encode(context);
 			}
 			
-			// Create data array and a dataView representing it
+			// Create data array and a DataView representing it
 			var data = new Uint8Array(
 				NS.length
 				+ 4/*sizeof(uint32)*/ + site.length
@@ -93,7 +102,7 @@ class MPW {
 					? 4/*sizeof(uint32)*/ + context.length
 					: 0)
 			);
-			let dataView = new DataView(data.buffer);
+			let dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
 			let i = 0;
 			
 			// Set data[0,] to NS
@@ -119,15 +128,43 @@ class MPW {
 			return Promise.reject(e);
 		}
 		
-		return this.key.then(
-			// Sign data using HMAC-SHA-256 w/ this.key
-			key => window.crypto.subtle.sign({
-				name: "HMAC",
-				hash: {
-					name: "SHA-256"
+		// If the Web Crypto API is supported use it, otherwise rely on crypto-js
+		if (window.crypto.subtle) {
+			return this.key.then(
+				// Sign data using HMAC-SHA-256 w/ this.key
+				key => window.crypto.subtle.sign({
+					name: "HMAC",
+					hash: {
+						name: "SHA-256"
+					}
+				}, key, data)/*= seed*/
+			).then(
+				// Convert the seed to Uint8Array from ArrayBuffer
+				seed => new Uint8Array(seed)
+			);
+		} else {
+			return this.key.then(function (key) {
+				// Create crypto-js WordArrays from Uint8Arrays data and key
+				data = CryptoJS.lib.WordArray.create(data);
+				key  = CryptoJS.lib.WordArray.create(key);
+				
+				// Sign data using HMAC-SHA-256 w/ key
+				return CryptoJS.HmacSHA256(data, key);
+			}).then(function (hash) {
+				// Create seed array and a DataView representing it
+				let seed     = new Uint8Array(hash.words.length * 4/*sizeof(int32)*/);
+				let seedView = new DataView(seed.buffer, seed.byteOffset, seed.byteLength);
+				
+				// Loop over hash.words which are INT32
+				for (let i = 0; i < hash.words.length; i++) {
+					// Set seed[i*4,i*4+4] to hash.words[i] INT32 in big-endian form
+					seedView.setInt32(i * 4/*sizeof(int32)*/, hash.words[i], false/*big-endian*/);
 				}
-			}, key, data)/*= seed*/
-		);
+				
+				// Return the seed Uint8Array
+				return seed;
+			});
+		}
 	}
 	
 	// generate takes ~ 0.200ms to complete + the time of calculateSeed
@@ -139,9 +176,6 @@ class MPW {
 		
 		// Calculate the seed
 		return this.calculateSeed(site, counter, context, NS).then(function (seed) {
-			// Convert the seed to Uint8Array from ArrayBuffer
-			seed = new Uint8Array(seed);
-			
 			// Find the selected template array
 			template = MPW.templates[template];
 			

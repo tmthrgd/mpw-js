@@ -82,11 +82,6 @@ window.addEventListener("load", function () {
 	password       = document.querySelector(".password");
 	error          = document.querySelector(".error");
 	
-	if (!window.crypto || !(window.crypto.subtle || (window.crypto.subtle = window.crypto.webkitSubtle))) {
-		error.innerText = error.textContent = "Your current browser does not support the Web Cryptography API! This page will not work.";
-		return;
-	}
-	
 	fullname.disabled = masterpassword.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = template.disabled = type.disabled = password.disabled = false;
 	
 	updateMPW();
