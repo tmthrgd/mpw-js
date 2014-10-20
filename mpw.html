@@ -162,7 +162,7 @@ Percival and licensed as follows:
 	
 	// If TextEncoder is not supported we include the polyfill
 	// https://github.com/inexorabletash/text-encoding
-	window.TextEncoder || document.write("<script src=text-encoding/lib/encoding.js><\/script>");
+	window.TextEncoder || document.write("<script src=encoding-polyfill.js><\/script>");
 	
 	// Alias window.crypto.subtle with window.crypto.webkitSubtle if
 	// the latter but not the former is supported
