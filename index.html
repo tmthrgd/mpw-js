@@ -146,7 +146,7 @@ Percival and licensed as follows:
 		// If the ES6 class, let, destructive assignment and rest arguments
 		// are supported, this will be successful and ES6 will be set to true
 		// and suffix to ".js"
-		eval("class $ES6 { constructor() { let b = true; this.b = b; } } var [ES6, esdir] = ((...args) => args)(new $ES6().b, '')");
+		eval("class $ES6 { constructor() { let b = true; this.b = b; } } const [ES6, esdir] = ((...args) => args)(new $ES6().b, '')");
 	} catch (e) {
 		// If the needed ES6 features aren't supported, ES6 will be set to false
 		// and suffix to ".es5.js"
