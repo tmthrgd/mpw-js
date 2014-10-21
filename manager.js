@@ -1,3 +1,10 @@
+/*! by Tom Thorogood <me@tomthorogood.co.uk> */
+
+/* Consider giving me attribution for the use of any part of this
+ * work and leaving my byline in, although this is not required
+ * (see LICENSE) it would be a nice gesture.
+ */
+
 let mpw, fullname, masterpassword, sitename, counter, context, template, type, resulttype, password, error, id = 0;
 
 function updateMPW() {
