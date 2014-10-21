@@ -164,6 +164,10 @@ Percival and licensed as follows:
 	// https://github.com/inexorabletash/text-encoding
 	window.TextEncoder || document.write("<script src=encoding-polyfill.js><\/script>");
 	
+	// If Promise is not supported we include the polyfill
+	// https://github.com/taylorhakes/promise-polyfill
+	window.Promise || document.write("<script src=promise-polyfill.js><\/script>");
+	
 	// Alias window.crypto.subtle with window.crypto.webkitSubtle if
 	// the latter but not the former is supported
 	if (!window.crypto.subtle && window.crypto.webkitSubtle) {
@@ -176,6 +180,11 @@ Percival and licensed as follows:
 		document.write("<script src=https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js><\/script>");
 		document.write("<script src=https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/lib-typedarrays-min.js><\/script>");
 	}
+	
+	// If your borwser needs a lot of polyfills consider upgrading
+	// to a more modern feature rich browser, if you are a browser
+	// developer considering adding these much needed features already!
+	// :D
 	
 	// Include the scrypt implementation
 	const SCRYPTASM_PATH = (window.location + '').replace(/\/index.html$/i, '/') + "lib/scrypt-asm.js";
