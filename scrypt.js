@@ -1,3 +1,10 @@
+/*! by Tom Thorogood <me@tomthorogood.co.uk> */
+
+/* Consider giving me attribution for the use of any part of this
+ * work and leaving my byline in, although this is not required
+ * (see LICENSE) it would be a nice gesture.
+ */
+
 window.scrypt = function () {
 	// 512MiB, the default 32MiB caused errors for unknown reasons
 	const SCRYPT_MEMORY = 512 * 1024 * 1024;

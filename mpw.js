@@ -1,3 +1,10 @@
+/*! by Tom Thorogood <me@tomthorogood.co.uk> */
+
+/* Consider giving me attribution for the use of any part of this
+ * work and leaving my byline in, although this is not required
+ * (see LICENSE) it would be a nice gesture.
+ */
+
 // A TextEncoder in UTF-8 to convert strings to `Uint8Array`s
 const txtencoder = new TextEncoder;
 
@@ -149,7 +156,7 @@ class MPW {
 				key  = CryptoJS.lib.WordArray.create(key);
 				
 				// Sign data using HMAC-SHA-256 w/ key
-				return CryptoJS.HmacSHA256(data, key)/*= key*/;
+				return CryptoJS.HmacSHA256(data, key)/*= seed*/;
 			}).then(function (hash) {
 				// Create seed array and a DataView representing it
 				let seed     = new Uint8Array(hash.words.length * 4/*sizeof(int32)*/);

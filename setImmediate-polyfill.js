@@ -1,3 +1,10 @@
+/*! by Tom Thorogood <me@tomthorogood.co.uk> */
+
+/* Consider giving me attribution for the use of any part of this
+ * work and leaving my byline in, although this is not required
+ * (see LICENSE) it would be a nice gesture.
+ */
+
 // setImmediate is a 0-delay setTimeout of sorts introduced
 // by MS and wrongly held back by other browsers
 window.setImmediate || !function (global) {
