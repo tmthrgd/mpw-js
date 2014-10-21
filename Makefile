@@ -8,3 +8,7 @@ es5/%: $*
 
 clean:
 	rm -rf es5 2>/dev/null
+
+update:
+	git submodule update --init --recursive
+	git submodule foreach git pull origin master
