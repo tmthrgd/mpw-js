@@ -1,4 +1,4 @@
-build: mkdir-es5 es5/manager.js
+build: mkdir-es5 es5/setImmediate-polyfill.js es5/manager.js
 
 mkdir-es5:
 	mkdir -p es5

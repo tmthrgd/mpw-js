@@ -157,7 +157,7 @@ Percival and licensed as follows:
 	ES6 || document.write("<script src=lib/traceur-runtime.js><\/script>");
 	
 	// If setImmediate is not implemented we include the polyfill
-	window.setImmediate || document.write("<script src=lib/" + esdir + "setImmediate-polyfill.js><\/script>");
+	window.setImmediate || document.write("<script src=" + esdir + "setImmediate-polyfill.js><\/script>");
 	
 	// If Typed Arrays are not supported we include the polyfill
 	// https://github.com/inexorabletash/polyfill
