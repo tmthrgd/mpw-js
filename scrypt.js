@@ -1,9 +1,5 @@
 /*! by Tom Thorogood <me@tomthorogood.co.uk> */
-
-/* Consider giving me attribution for the use of any part of this
- * work and leaving my byline in, although this is not required
- * (see LICENSE) it would be a nice gesture.
- */
+/*! This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
 window.scrypt = function () {
 	// 512MiB, the default 32MiB caused errors for unknown reasons
