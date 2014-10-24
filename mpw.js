@@ -17,11 +17,11 @@ class MPW {
 	
 	// calculateKey takes ~ 1450.000ms to complete
 	static calculateKey(name, password) {
-		if (!name) {
+		if (!name || !name.length) {
 			return Promise.reject(new Error("Argument name not present"));
 		}
 		
-		if (!password) {
+		if (!password || !password.length) {
 			return Promise.reject(new Error("Argument password not present"));
 		}
 		
@@ -75,12 +75,12 @@ class MPW {
 	}
 	
 	// calculateSeed takes ~ 3.000ms to complete + the time of calculateKey once
-	calculateSeed(site, counter = 0, context = null, NS = MPW.NS) {
+	calculateSeed(site, counter = 1, context = null, NS = MPW.NS) {
 		if (!site) {
 			return Promise.reject(new Error("Argument site not present"));
 		}
 		
-		if (counter < 0 || counter > 2147483647/*Math.pow(2, 31) - 1*/) {
+		if (counter < 1 || counter > 2147483647/*Math.pow(2, 31) - 1*/) {
 			return Promise.reject(new Error("Argument counter out of range"));
 		}
 		
@@ -171,7 +171,7 @@ class MPW {
 	}
 	
 	// generate takes ~ 0.200ms to complete + the time of calculateSeed
-	generate(site, counter = 0, context = null, template = "long", NS = MPW.NS) {
+	generate(site, counter = 1, context = null, template = "long", NS = MPW.NS) {
 		// Does the requested template exist?
 		if (!(template in MPW.templates)) {
 			return Promise.reject(new Error("Argument template invalid"));
@@ -198,17 +198,17 @@ class MPW {
 	}
 	
 	// generate a password with the password namespace
-	generatePassword(site, counter = 0, template = "long") {
+	generatePassword(site, counter = 1, template = "long") {
 		return this.generate(site, counter, null, template, MPW.PasswordNS);
 	}
 	
 	// generate a username with the login namespace
-	generateLogin(site, counter = 0, template = "name") {
+	generateLogin(site, counter = 1, template = "name") {
 		return this.generate(site, counter, null, template, MPW.LoginNS);
 	}
 	
 	// generate a security answer with the answer namespace
-	generateAnswer(site, counter = 0, context = "", template = "phrase") {
+	generateAnswer(site, counter = 1, context = "", template = "phrase") {
 		return this.generate(site, counter, context, template, MPW.AnswerNS);
 	}
 	
@@ -220,11 +220,11 @@ class MPW {
 	
 	static test() {
 		// Pretty simple test here
-		return new MPW("user", "password").generate("example.com", 0, null, "long", MPW.NS).then(function (password) {
-			console.assert(password === "KezpWado2+Fazo", "Self-test failed; expected: KezpWado2+Fazo; got: " + password);
-			return password === "KezpWado2+Fazo"
+		return new MPW("user", "password").generate("example.com", 1, null, "long", MPW.NS).then(function (password) {
+			console.assert(password === "ZedaFaxcZaso9*", "Self-test failed; expected: ZedaFaxcZaso9*; got: " + password);
+			return password === "ZedaFaxcZaso9*"
 				? Promise.resolve()
-				: Promise.reject(new Error("Self-test failed; expected: KezpWado2+Fazo; got: " + password));
+				: Promise.reject(new Error("Self-test failed; expected: ZedaFaxcZaso9*; got: " + password));
 		});
 	}
 }
