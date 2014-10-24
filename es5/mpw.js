@@ -8,13 +8,13 @@ var $MPW = MPW;
 ($traceurRuntime.createClass)(MPW, {
   calculateSeed: function(site) {
     "use strict";
-    var counter = arguments[1] !== (void 0) ? arguments[1] : 0;
+    var counter = arguments[1] !== (void 0) ? arguments[1] : 1;
     var context = arguments[2] !== (void 0) ? arguments[2] : null;
     var NS = arguments[3] !== (void 0) ? arguments[3] : $MPW.NS;
     if (!site) {
       return Promise.reject(new Error("Argument site not present"));
     }
-    if (counter < 0 || counter > 2147483647) {
+    if (counter < 1 || counter > 2147483647) {
       return Promise.reject(new Error("Argument counter out of range"));
     }
     try {
@@ -69,7 +69,7 @@ var $MPW = MPW;
   },
   generate: function(site) {
     "use strict";
-    var counter = arguments[1] !== (void 0) ? arguments[1] : 0;
+    var counter = arguments[1] !== (void 0) ? arguments[1] : 1;
     var context = arguments[2] !== (void 0) ? arguments[2] : null;
     var template = arguments[3] !== (void 0) ? arguments[3] : "long";
     var NS = arguments[4] !== (void 0) ? arguments[4] : $MPW.NS;
@@ -87,19 +87,19 @@ var $MPW = MPW;
   },
   generatePassword: function(site) {
     "use strict";
-    var counter = arguments[1] !== (void 0) ? arguments[1] : 0;
+    var counter = arguments[1] !== (void 0) ? arguments[1] : 1;
     var template = arguments[2] !== (void 0) ? arguments[2] : "long";
     return this.generate(site, counter, null, template, $MPW.PasswordNS);
   },
   generateLogin: function(site) {
     "use strict";
-    var counter = arguments[1] !== (void 0) ? arguments[1] : 0;
+    var counter = arguments[1] !== (void 0) ? arguments[1] : 1;
     var template = arguments[2] !== (void 0) ? arguments[2] : "name";
     return this.generate(site, counter, null, template, $MPW.LoginNS);
   },
   generateAnswer: function(site) {
     "use strict";
-    var counter = arguments[1] !== (void 0) ? arguments[1] : 0;
+    var counter = arguments[1] !== (void 0) ? arguments[1] : 1;
     var context = arguments[2] !== (void 0) ? arguments[2] : "";
     var template = arguments[3] !== (void 0) ? arguments[3] : "phrase";
     return this.generate(site, counter, context, template, $MPW.AnswerNS);
@@ -111,10 +111,10 @@ var $MPW = MPW;
 }, {
   calculateKey: function(name, password) {
     "use strict";
-    if (!name) {
+    if (!name || !name.length) {
       return Promise.reject(new Error("Argument name not present"));
     }
-    if (!password) {
+    if (!password || !password.length) {
       return Promise.reject(new Error("Argument password not present"));
     }
     try {
@@ -143,9 +143,9 @@ var $MPW = MPW;
   },
   test: function() {
     "use strict";
-    return new $MPW("user", "password").generate("example.com", 0, null, "long", $MPW.NS).then(function(password) {
-      console.assert(password === "KezpWado2+Fazo", "Self-test failed; expected: KezpWado2+Fazo; got: " + password);
-      return password === "KezpWado2+Fazo" ? Promise.resolve() : Promise.reject(new Error("Self-test failed; expected: KezpWado2+Fazo; got: " + password));
+    return new $MPW("user", "password").generate("example.com", 1, null, "long", $MPW.NS).then(function(password) {
+      console.assert(password === "ZedaFaxcZaso9*", "Self-test failed; expected: ZedaFaxcZaso9*; got: " + password);
+      return password === "ZedaFaxcZaso9*" ? Promise.resolve() : Promise.reject(new Error("Self-test failed; expected: ZedaFaxcZaso9*; got: " + password));
     });
   }
 });
