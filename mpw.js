@@ -60,7 +60,7 @@ class MPW {
 			
 			if (this.version < 3) {
 				// Set data[i,i+4] to nameCharLength UINT32 in big-endian form
-				dataView.setUint32(i, nameCharLength, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+				saltView.setUint32(i, nameCharLength, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
 			} else {
 				// Set salt[i,i+4] to name.length UINT32 in big-endian form
 				saltView.setUint32(i, name.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;

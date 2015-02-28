@@ -140,7 +140,7 @@ var $MPW = MPW;
       salt.set(NS, i);
       i += NS.length;
       if (this.version < 3) {
-        dataView.setUint32(i, nameCharLength, false);
+        saltView.setUint32(i, nameCharLength, false);
         i += 4;
       } else {
         saltView.setUint32(i, name.length, false);
