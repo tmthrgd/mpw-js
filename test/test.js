@@ -69,8 +69,8 @@ window.ghcallback = function ghcallback(response) {
 			return Promise.resolve();
 		}
 		
-		var mpwKey = testCase.fullName.length + "$" + testCase.fullName + "$" + testCase.masterPassword.length + "$" + testCase.masterPassword;
-		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.fullName, testCase.masterPassword));
+		var mpwKey = "v" + testCase.algorithm + "$" + testCase.fullName.length + "$" + testCase.fullName + "$" + testCase.masterPassword.length + "$" + testCase.masterPassword;
+		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.fullName, testCase.masterPassword, testCase.algorithm));
 		
 		var template = testCase.siteType.replace(/^Generated/, "").toLowerCase();
 		
