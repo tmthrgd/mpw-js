@@ -7,15 +7,20 @@ const txtencoder = new TextEncoder;
 // JS Web Crypto implementation of http://masterpasswordapp.com/algorithm.html
 class MPW {
 	constructor(name, password, version = 3) {
+		// The algorithm version
+		this.version = version;
+		
 		// Store name on the object, this is not used at all internally
 		this.name = name;
 		
-		// Calculate the master key which will be used to calculate
-		// the password seed
-		this.key = MPW.calculateKey(name, password);
-		
-		// The algorithm version
-		this.version = version;
+		// Check for valid algorithm versions
+		if (version >= 1 && version <= 3) {
+			// Calculate the master key which will be used to calculate
+			// the password seed
+			this.key = MPW.calculateKey(name, password);
+		} else {
+			this.key = Promise.reject(new Error("Algorithm version " + version + " not implemented"));
+		}
 	}
 	
 	// calculateKey takes ~ 1450.000ms to complete

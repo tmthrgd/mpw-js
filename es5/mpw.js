@@ -2,9 +2,13 @@ var txtencoder = new TextEncoder;
 var MPW = function MPW(name, password) {
   "use strict";
   var version = arguments[2] !== (void 0) ? arguments[2] : 3;
-  this.name = name;
-  this.key = $MPW.calculateKey(name, password);
   this.version = version;
+  this.name = name;
+  if (version >= 1 && version <= 3) {
+    this.key = $MPW.calculateKey(name, password);
+  } else {
+    this.key = Promise.reject(new Error("Algorithm version " + version + " not implemented"));
+  }
 };
 var $MPW = MPW;
 ($traceurRuntime.createClass)(MPW, {
