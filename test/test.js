@@ -3,7 +3,7 @@ window.ghcallback = function ghcallback(response) {
 	
 	if (response.meta.status != 200) {
 		console.warn && console.warn(response.meta);
-		error.textContent = response.meta.message;
+		error.textContent = response.data.message;
 		return;
 	}
 	
@@ -59,9 +59,9 @@ window.ghcallback = function ghcallback(response) {
 		var template = testCase.siteType.replace(/^Generated/, "").toLowerCase();
 		
 		if (testCase.siteVariant === "Answer") {
-			var value = mpw.generateAnswer(testCase.siteName, testCase.siteCounter | 0, testCase.siteContext, template);
+			var value = mpw.generateAnswer(testCase.siteName, Number.parseInt(testCase.siteCounter), testCase.siteContext, template);
 		} else {
-			var value = mpw["generate" + testCase.siteVariant](testCase.siteName, testCase.siteCounter | 0, template);
+			var value = mpw["generate" + testCase.siteVariant](testCase.siteName, Number.parseInt(testCase.siteCounter), template);
 		}
 		
 		var test = document.createElement("div");
