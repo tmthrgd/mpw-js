@@ -80,7 +80,7 @@ class MPW {
 			return Promise.reject(new Error("Argument site not present"));
 		}
 		
-		if (counter < 1 || counter > 2147483647/*Math.pow(2, 31) - 1*/) {
+		if (counter < 1 || counter > 4294967295/*Math.pow(2, 32) - 1*/) {
 			return Promise.reject(new Error("Argument counter out of range"));
 		}
 		
@@ -100,7 +100,7 @@ class MPW {
 			var data = new Uint8Array(
 				NS.length
 				+ 4/*sizeof(uint32)*/ + site.length
-				+ 4/*sizeof(uint32)*/
+				+ 4/*sizeof(int32)*/
 				+ (context
 					? 4/*sizeof(uint32)*/ + context.length
 					: 0)
@@ -117,8 +117,8 @@ class MPW {
 			// Set data[i,] to site
 			data.set(site, i); i += site.length;
 			
-			// Set data[i,i+4] to counter UINT32 in big-endian form
-			dataView.setUint32(i, counter, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			// Set data[i,i+4] to counter INT32 in big-endian form
+			dataView.setInt32(i, counter, false/*big-endian*/); i += 4/*sizeof(int32)*/;
 			
 			if (context) {
 				// Set data[i,i+4] to context.length UINT32 in big-endian form
