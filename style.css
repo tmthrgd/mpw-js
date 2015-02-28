@@ -113,3 +113,33 @@ input:invalid {
 img {
 	border: none;
 }
+
+.test {
+	margin: 1em 0;
+	padding: 0.5em;
+	
+	border: thin solid black;
+}
+
+.test.success {
+	background: rgba(0, 128, 0, 0.2);
+	border-color: green;
+}
+
+.test.failure {
+	background: rgba(255, 0, 0, 0.2);
+	border-color: red;
+}
+
+.passed {
+	color: green;
+}
+
+.failed {
+	color: red;
+}
+
+.passed::after, .failed::after, .completed::after {
+	content: "/" attr(data-total);
+	content: "/" attr(data-total integer, 0);
+}
