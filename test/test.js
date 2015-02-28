@@ -59,16 +59,6 @@ window.ghcallback = function ghcallback(response) {
 		test.textContent = "Test " + testCase.testID + " Running";
 		testsDiv.appendChild(test);
 		
-		if (testCase.algorithm == 0) {
-			test.classList.add("completed", "skipped");
-			test.textContent = "Test " + testCase.testID + " Skipped; Algorithm v0 is not implemented";
-			
-			skipped.textContent = ++skipped.textContent;
-			completed.textContent = ++completed.textContent;
-			
-			return Promise.resolve();
-		}
-		
 		var mpwKey = "v" + testCase.algorithm + "$" + testCase.fullName.length + "$" + testCase.fullName + "$" + testCase.masterPassword.length + "$" + testCase.masterPassword;
 		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.fullName, testCase.masterPassword, testCase.algorithm));
 		
