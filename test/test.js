@@ -9,7 +9,7 @@ window.ghcallback = function ghcallback(response) {
 	
 	console.log && console.log(response.meta);
 	
-	var data = response.data.encoding === "base64" ? window.atob(response.data.content.replace(/\n/g, "")) : response.data.content;
+	var data = response.data.encoding === "base64" ? decodeURIComponent(escape(window.atob(response.data.content.replace(/\n/g, "")))) : response.data.content;
 	
 	try {
 		var xml = (new window.DOMParser).parseFromString(data, "text/xml");
@@ -40,11 +40,12 @@ window.ghcallback = function ghcallback(response) {
 		return cases[testCase].algorithm && cases[testCase].result;
 	});
 	
-	var passed = document.querySelector(".passed");
-	var failed = document.querySelector(".failed");
-	var completed = document.querySelector(".completed");
+	var passed = document.querySelector(".num.passed");
+	var failed = document.querySelector(".num.failed");
+	var skipped = document.querySelector(".num.skipped");
+	var completed = document.querySelector(".num.completed");
 	
-	passed.dataset.total = failed.dataset.total = completed.dataset.total = tests.length;
+	passed.dataset.total = failed.dataset.total = skipped.dataset.total = completed.dataset.total = tests.length;
 	
 	var testsDiv = document.querySelector(".tests");
 	
@@ -53,7 +54,22 @@ window.ghcallback = function ghcallback(response) {
 	Promise.all(tests.map(function runTest(testCase) {
 		testCase = cases[testCase];
 		
-		var mpwKey = testCase.fullName + ";" + testCase.masterPassword;
+		var test = document.createElement("div");
+		test.classList.add("test");
+		test.textContent = "Test " + testCase.testID + " Running";
+		testsDiv.appendChild(test);
+		
+		if (testCase.algorithm == 0) {
+			test.classList.add("completed", "skipped");
+			test.textContent = "Test " + testCase.testID + " Skipped; Algorithm v0 is not implemented";
+			
+			skipped.textContent = ++skipped.textContent;
+			completed.textContent = ++completed.textContent;
+			
+			return Promise.resolve();
+		}
+		
+		var mpwKey = testCase.fullName.length + "$" + testCase.fullName + "$" + testCase.masterPassword.length + "$" + testCase.masterPassword;
 		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.fullName, testCase.masterPassword));
 		
 		var template = testCase.siteType.replace(/^Generated/, "").toLowerCase();
@@ -64,32 +80,23 @@ window.ghcallback = function ghcallback(response) {
 			var value = mpw["generate" + testCase.siteVariant](testCase.siteName, Number.parseInt(testCase.siteCounter), template);
 		}
 		
-		var test = document.createElement("div");
-		test.classList.add("test");
-		test.textContent = 'Test ' + testCase.testID + ' Running';
-		testsDiv.appendChild(test);
-		
 		return value.then(function (pass) {
-			if (pass !== testCase.result) {
-				return Promise.reject("Invalid result; expected: " + testCase.result + "; got: " + pass);
-			}
-			
-			return Promise.resolve();
+			return pass === testCase.result
+				? Promise.resolve()
+				: Promise.reject("Invalid result; expected: " + testCase.result + "; got: " + pass);
 		}).then(function () {
-			test.classList.add("success");
-			test.textContent = 'Test ' + testCase.testID + ' Passed';
+			test.classList.add("completed", "success");
+			test.textContent = "Test " + testCase.testID + " Passed";
 			
 			passed.textContent = ++passed.textContent;
+			completed.textContent = ++completed.textContent;
 			
 			return Promise.resolve();
 		}, function (err) {
-			test.classList.add("failure");
-			test.textContent = 'Test ' + testCase.testID + ' Failed; ' + err;
+			test.classList.add("completed", "failure");
+			test.textContent = "Test " + testCase.testID + " Failed; " + err;
 			
 			failed.textContent = ++failed.textContent;
-			
-			return Promise.resolve();
-		}).then(function () {
 			completed.textContent = ++completed.textContent;
 			
 			return Promise.resolve();

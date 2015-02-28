@@ -131,15 +131,24 @@ img {
 	border-color: red;
 }
 
-.passed {
+.test.skipped {
+	background: rgba(128, 128, 128, 0.175);
+	border-color: grey;
+}
+
+.num::after {
+	content: "/" attr(data-total);
+	content: "/" attr(data-total integer, 0);
+}
+
+.num.passed {
 	color: green;
 }
 
-.failed {
+.num.failed {
 	color: red;
 }
 
-.passed::after, .failed::after, .completed::after {
-	content: "/" attr(data-total);
-	content: "/" attr(data-total integer, 0);
+.num.skipped {
+	color: grey;
 }
