@@ -206,7 +206,7 @@ class MPW {
 		// Calculate the seed
 		let seed = this.calculateSeed(site, counter, context, NS);
 		
-		if (self.version < 1) {
+		if (this.version < 1) {
 			// Convert seed from host byte order to network byte
 			// to be compatible with v0 of MPW
 			// Follows the implementation at https://github.com/...

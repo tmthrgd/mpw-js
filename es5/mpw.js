@@ -89,7 +89,7 @@ var $MPW = MPW;
       return Promise.reject(new Error("Argument template invalid"));
     }
     var seed = this.calculateSeed(site, counter, context, NS);
-    if (self.version < 1) {
+    if (this.version < 1) {
       seed = seed.then(function(seedBytes) {
         var seed = new Uint16Array(seedBytes.length);
         for (var i = 0; i < seed.length; i++) {
