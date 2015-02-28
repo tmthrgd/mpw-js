@@ -1,7 +1,7 @@
 /*! by Tom Thorogood <me@tomthorogood.co.uk> */
 /*! This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
-let mpw, fullname, masterpassword, sitename, counter, context, template, type, resulttype, password, error, id = 0;
+let mpw, fullname, masterpassword, version, sitename, counter, context, template, type, resulttype, password, error, id = 0;
 
 function updateMPW() {
 	error.textContent = password.value = "";
@@ -9,11 +9,12 @@ function updateMPW() {
 	if (!fullname.value ||
 		!masterpassword.value ||
 		!fullname.validity.valid ||
-		!masterpassword.validity.valid) {
+		!masterpassword.validity.valid ||
+	    !version.validity.valid) {
 		return mpw = null;
 	}
 	
-	mpw = new MPW(fullname.value, masterpassword.value);
+	mpw = new MPW(fullname.value, masterpassword.value, version.valueAsNumber);
 	
 	updatePassword();
 }
@@ -75,6 +76,7 @@ function updateType() {
 window.addEventListener("load", function () {
 	fullname       = document.querySelector("[name=fullname]");
 	masterpassword = document.querySelector("[name=masterpassword]");
+	version        = document.querySelector("[name=version]");
 	calculatekey   = document.querySelector("[name=calculatekey]");
 	sitename       = document.querySelector("[name=site]");
 	counter        = document.querySelector("[name=counter]");
@@ -85,7 +87,7 @@ window.addEventListener("load", function () {
 	password       = document.querySelector(".password");
 	error          = document.querySelector(".error");
 	
-	fullname.disabled = masterpassword.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = template.disabled = type.disabled = password.disabled = false;
+	fullname.disabled = masterpassword.disabled = version.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = template.disabled = type.disabled = password.disabled = false;
 	
 	updateMPW();
 	calculatekey.addEventListener("click", updateMPW, false);
