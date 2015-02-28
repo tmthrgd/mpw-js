@@ -6,7 +6,7 @@ const txtencoder = new TextEncoder;
 
 // JS Web Crypto implementation of http://masterpasswordapp.com/algorithm.html
 class MPW {
-	constructor(name, password, version = 3) {
+	constructor(name, password, version = MPW.VERSION) {
 		// The algorithm version
 		this.version = version;
 		
@@ -14,17 +14,17 @@ class MPW {
 		this.name = name;
 		
 		// Check for valid algorithm versions
-		if (version >= 1 && version <= 3) {
+		if (version >= 1 && version <= MPW.VERSION) {
 			// Calculate the master key which will be used to calculate
 			// the password seed
-			this.key = MPW.calculateKey(name, password);
+			this.key = MPW.calculateKey(name, password, version);
 		} else {
 			this.key = Promise.reject(new Error("Algorithm version " + version + " not implemented"));
 		}
 	}
 	
 	// calculateKey takes ~ 1450.000ms to complete
-	static calculateKey(name, password) {
+	static calculateKey(name, password, version = MPW.VERSION) {
 		if (!name || !name.length) {
 			return Promise.reject(new Error("Argument name not present"));
 		}
@@ -58,7 +58,7 @@ class MPW {
 			// Set salt[0,] to NS
 			salt.set(NS, i); i += NS.length;
 			
-			if (this.version < 3) {
+			if (version < 3) {
 				// Set data[i,i+4] to nameCharLength UINT32 in big-endian form
 				saltView.setUint32(i, nameCharLength, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
 			} else {
@@ -254,6 +254,9 @@ class MPW {
 		});
 	}
 }
+
+// The latest version of MPW supported
+MPW.VERSION = 3;
 
 // The namespace used in calculateKey
 MPW.NS = "com.lyndir.masterpassword";

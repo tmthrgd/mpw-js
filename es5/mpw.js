@@ -1,11 +1,11 @@
 var txtencoder = new TextEncoder;
 var MPW = function MPW(name, password) {
   "use strict";
-  var version = arguments[2] !== (void 0) ? arguments[2] : 3;
+  var version = arguments[2] !== (void 0) ? arguments[2] : $MPW.VERSION;
   this.version = version;
   this.name = name;
-  if (version >= 1 && version <= 3) {
-    this.key = $MPW.calculateKey(name, password);
+  if (version >= 1 && version <= $MPW.VERSION) {
+    this.key = $MPW.calculateKey(name, password, version);
   } else {
     this.key = Promise.reject(new Error("Algorithm version " + version + " not implemented"));
   }
@@ -123,6 +123,7 @@ var $MPW = MPW;
 }, {
   calculateKey: function(name, password) {
     "use strict";
+    var version = arguments[2] !== (void 0) ? arguments[2] : $MPW.VERSION;
     if (!name || !name.length) {
       return Promise.reject(new Error("Argument name not present"));
     }
@@ -139,7 +140,7 @@ var $MPW = MPW;
       var i = 0;
       salt.set(NS, i);
       i += NS.length;
-      if (this.version < 3) {
+      if (version < 3) {
         saltView.setUint32(i, nameCharLength, false);
         i += 4;
       } else {
@@ -167,6 +168,7 @@ var $MPW = MPW;
     });
   }
 });
+MPW.VERSION = 3;
 MPW.NS = "com.lyndir.masterpassword";
 MPW.PasswordNS = "com.lyndir.masterpassword";
 MPW.LoginNS = "com.lyndir.masterpassword.login";
