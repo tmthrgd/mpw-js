@@ -14,7 +14,7 @@ class MPW {
 		this.name = name;
 		
 		// Check for valid algorithm versions
-		if (version >= 1 && version <= MPW.VERSION) {
+		if (version >= 0 && version <= MPW.VERSION) {
 			// Calculate the master key which will be used to calculate
 			// the password seed
 			this.key = MPW.calculateKey(name, password, version);
@@ -204,7 +204,27 @@ class MPW {
 		}
 		
 		// Calculate the seed
-		return this.calculateSeed(site, counter, context, NS).then(function (seed) {
+		let seed = this.calculateSeed(site, counter, context, NS);
+		
+		if (self.version < 1) {
+			// Convert seed from host byte order to network byte
+			// to be compatible with v0 of MPW
+			// Follows the implementation at https://github.com/...
+			// Lyndir/MasterPassword/blob/master/MasterPassword/...
+			// Java/masterpassword-algorithm/src/main/java/com/...
+			// lyndir/masterpassword/MasterKeyV0.java#L105
+			seed = seed.then(function (seedBytes) {
+				var seed = new Uint16Array(seedBytes.length);
+				
+				for (var i = 0; i < seed.length; i++) {
+					seed[i] = (seedBytes[i] > 127 ? 0x00ff : 0x0000) | (seedBytes[i] << 8);
+				}
+				
+				return seed;
+			});
+		}
+		
+		return seed.then(function (seed) {
 			// Find the selected template array
 			template = MPW.templates[template];
 			

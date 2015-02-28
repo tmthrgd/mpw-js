@@ -4,7 +4,7 @@ var MPW = function MPW(name, password) {
   var version = arguments[2] !== (void 0) ? arguments[2] : $MPW.VERSION;
   this.version = version;
   this.name = name;
-  if (version >= 1 && version <= $MPW.VERSION) {
+  if (version >= 0 && version <= $MPW.VERSION) {
     this.key = $MPW.calculateKey(name, password, version);
   } else {
     this.key = Promise.reject(new Error("Algorithm version " + version + " not implemented"));
@@ -88,7 +88,17 @@ var $MPW = MPW;
     if (!($traceurRuntime.toProperty(template) in $MPW.templates)) {
       return Promise.reject(new Error("Argument template invalid"));
     }
-    return this.calculateSeed(site, counter, context, NS).then(function(seed) {
+    var seed = this.calculateSeed(site, counter, context, NS);
+    if (self.version < 1) {
+      seed = seed.then(function(seedBytes) {
+        var seed = new Uint16Array(seedBytes.length);
+        for (var i = 0; i < seed.length; i++) {
+          seed[$traceurRuntime.toProperty(i)] = (seedBytes[$traceurRuntime.toProperty(i)] > 127 ? 0x00ff : 0x0000) | (seedBytes[$traceurRuntime.toProperty(i)] << 8);
+        }
+        return seed;
+      });
+    }
+    return seed.then(function(seed) {
       template = $MPW.templates[$traceurRuntime.toProperty(template)];
       template = template[$traceurRuntime.toProperty(seed[0] % template.length)];
       return template.split("").map(function(c, i) {
