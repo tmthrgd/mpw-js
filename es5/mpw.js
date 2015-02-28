@@ -14,7 +14,7 @@ var $MPW = MPW;
     if (!site) {
       return Promise.reject(new Error("Argument site not present"));
     }
-    if (counter < 1 || counter > 2147483647) {
+    if (counter < 1 || counter > 4294967295) {
       return Promise.reject(new Error("Argument counter out of range"));
     }
     try {
@@ -32,7 +32,7 @@ var $MPW = MPW;
       i += 4;
       data.set(site, i);
       i += site.length;
-      dataView.setUint32(i, counter, false);
+      dataView.setInt32(i, counter, false);
       i += 4;
       if (context) {
         dataView.setUint32(i, context.length, false);
