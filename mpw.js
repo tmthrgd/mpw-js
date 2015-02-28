@@ -6,13 +6,16 @@ const txtencoder = new TextEncoder;
 
 // JS Web Crypto implementation of http://masterpasswordapp.com/algorithm.html
 class MPW {
-	constructor(name, password) {
+	constructor(name, password, version = 3) {
 		// Store name on the object, this is not used at all internally
 		this.name = name;
 		
 		// Calculate the master key which will be used to calculate
 		// the password seed
 		this.key = MPW.calculateKey(name, password);
+		
+		// The algorithm version
+		this.version = version;
 	}
 	
 	// calculateKey takes ~ 1450.000ms to complete
@@ -26,6 +29,10 @@ class MPW {
 		}
 		
 		try {
+			// Cache the number of characters in name for older buggy
+			// versions of MPW
+			let nameCharLength = name.length;
+			
 			// Convert password string to a Uint8Array w/ UTF-8
 			password = txtencoder.encode(password);
 			
@@ -46,8 +53,13 @@ class MPW {
 			// Set salt[0,] to NS
 			salt.set(NS, i); i += NS.length;
 			
-			// Set salt[i,i+4] to name.length UINT32 in big-endian form
-			saltView.setUint32(i, name.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			if (this.version < 3) {
+				// Set data[i,i+4] to nameCharLength UINT32 in big-endian form
+				dataView.setUint32(i, nameCharLength, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			} else {
+				// Set salt[i,i+4] to name.length UINT32 in big-endian form
+				saltView.setUint32(i, name.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			}
 			
 			// Set salt[i,] to name
 			salt.set(name, i); i += name.length;
@@ -85,6 +97,10 @@ class MPW {
 		}
 		
 		try {
+			// Cache the number of characters in site for older buggy
+			// versions of MPW
+			let siteCharLength = site.length;
+			
 			// Convert salt string to a Uint8Array w/ UTF-8
 			site = txtencoder.encode(site);
 			
@@ -111,8 +127,13 @@ class MPW {
 			// Set data[0,] to NS
 			data.set(NS, i); i += NS.length;
 			
-			// Set data[i,i+4] to site.length UINT32 in big-endian form
-			dataView.setUint32(i, site.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			if (this.version < 2) {
+				// Set data[i,i+4] to siteCharLength UINT32 in big-endian form
+				dataView.setUint32(i, siteCharLength, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			} else {
+				// Set data[i,i+4] to site.length UINT32 in big-endian form
+				dataView.setUint32(i, site.length, false/*big-endian*/); i += 4/*sizeof(uint32)*/;
+			}
 			
 			// Set data[i,] to site
 			data.set(site, i); i += site.length;

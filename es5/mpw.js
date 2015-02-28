@@ -1,8 +1,10 @@
 var txtencoder = new TextEncoder;
 var MPW = function MPW(name, password) {
   "use strict";
+  var version = arguments[2] !== (void 0) ? arguments[2] : 3;
   this.name = name;
   this.key = $MPW.calculateKey(name, password);
+  this.version = version;
 };
 var $MPW = MPW;
 ($traceurRuntime.createClass)(MPW, {
@@ -18,6 +20,7 @@ var $MPW = MPW;
       return Promise.reject(new Error("Argument counter out of range"));
     }
     try {
+      var siteCharLength = site.length;
       site = txtencoder.encode(site);
       NS = txtencoder.encode(NS);
       if (context) {
@@ -28,8 +31,13 @@ var $MPW = MPW;
       var i = 0;
       data.set(NS, i);
       i += NS.length;
-      dataView.setUint32(i, site.length, false);
-      i += 4;
+      if (this.version < 2) {
+        dataView.setUint32(i, siteCharLength, false);
+        i += 4;
+      } else {
+        dataView.setUint32(i, site.length, false);
+        i += 4;
+      }
       data.set(site, i);
       i += site.length;
       dataView.setInt32(i, counter, false);
@@ -118,6 +126,7 @@ var $MPW = MPW;
       return Promise.reject(new Error("Argument password not present"));
     }
     try {
+      var nameCharLength = name.length;
       password = txtencoder.encode(password);
       name = txtencoder.encode(name);
       var NS = txtencoder.encode($MPW.NS);
@@ -126,8 +135,13 @@ var $MPW = MPW;
       var i = 0;
       salt.set(NS, i);
       i += NS.length;
-      saltView.setUint32(i, name.length, false);
-      i += 4;
+      if (this.version < 3) {
+        dataView.setUint32(i, nameCharLength, false);
+        i += 4;
+      } else {
+        saltView.setUint32(i, name.length, false);
+        i += 4;
+      }
       salt.set(name, i);
       i += name.length;
     } catch (e) {
