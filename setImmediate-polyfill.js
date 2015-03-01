@@ -59,7 +59,7 @@ window.setImmediate || !function (global) {
 		return postMessageIsAsynchronous;
 	})()) {
 		// A unique id prefix to ensure that ONLY valid messages are accepted
-		let messageName = ("setImmediate-polyfill-" + Math.random()).replace("0.", "");
+		let messageName = `setImmediate-polyfill-${Math.random()}`.replace("0.", "");
 		
 		// The numeric identifier of the next dispatched scrypt call
 		let immediateID = 1;

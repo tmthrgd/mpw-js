@@ -64,7 +64,7 @@ window.ghcallback = function ghcallback(response) {
 		test.textContent = "Test " + testCase.testID + " Running";
 		testsDiv.appendChild(test);
 		
-		var mpwKey = "v" + testCase.algorithm + "$" + testCase.fullName.length + "$" + testCase.fullName + "$" + testCase.masterPassword.length + "$" + testCase.masterPassword;
+		var mpwKey = ["v" + testCase.algorithm, testCase.fullName.length, testCase.fullName, testCase.masterPassword.length, testCase.masterPassword].join("$");
 		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.fullName, testCase.masterPassword, testCase.algorithm));
 		
 		var template = testCase.siteType.replace(/^Generated/, "").toLowerCase();

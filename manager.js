@@ -12,7 +12,7 @@ function updateMPW() {
 		!masterpassword.value ||
 		!fullname.validity.valid ||
 		!masterpassword.validity.valid ||
-	    !version.validity.valid) {
+		!version.validity.valid) {
 		return mpw = null;
 	}
 	
