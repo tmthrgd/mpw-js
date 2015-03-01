@@ -95,13 +95,6 @@ Percival and licensed as follows:
 	</footer>
 	
 	<script>
-	// If the needed ES6 features aren't supported, ES6 will be set to false
-	// and suffix to ".es5.js"
-	// These will be overridden if ES6 is supported
-	var ES6 = false;
-	var esdir = "es5/";
-	</script>
-	<script>
 	// Test for required ES6 features
 	// This test must be in a seperate script tag as they are
 	// language features and ES5 parsers will hard-fail otherwise
@@ -109,9 +102,14 @@ Percival and licensed as follows:
 	// If the ES6 class, let, destructive assignment and rest arguments
 	// are supported, this will be successful and ES6 will be set to true
 	// and suffix to ".js"
-	class $ES6 { constructor() { let b = true; this.b = b; } } const [ES6, esdir] = ((...args) => args)(new $ES6().b, ``)
+	class $ES6 { constructor() { let b = true; this.b = b; } }
+	const [ES6, esdir] = ((...args) => args)(new $ES6().b, ``);
 	</script>
 	<script>
+	// If the needed ES6 features aren't supported, ES6 will be set to false
+	// and suffix to ".es5.js"
+	var ES6 = false, esdir = "es5/";
+	
 	// If ES6 is not supported we must include traceur-runtime.js
 	ES6 || document.write("<script src=../lib/traceur-runtime.js><\/script>");
 	
