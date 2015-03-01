@@ -38,6 +38,9 @@ window.setImmediate || !function(global) {
     var channel = global.MessageChannel && new global.MessageChannel();
     channel && channel.port1.start();
     (channel && channel.port1 || global).addEventListener("message", function(event) {
+      if (!event.data || !event.data.split) {
+        return;
+      }
       var $__5 = event.data.split("$"),
           name = $__5[0],
           immediateID = $__5[1];

@@ -1,5 +1,7 @@
 /*! by Tom Thorogood <me@tomthorogood.co.uk> */
-/*! This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
+/*! This work is licensed under the Creative Commons Attribution 4.0
+International License. To view a copy of this license, visit
+http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
 // setImmediate is a 0-delay setTimeout of sorts introduced
 // by MS and wrongly held back by other browsers
@@ -77,6 +79,12 @@ window.setImmediate || !function (global) {
 		// Add a handler to the message event of either the message
 		// channel, if it exists, or global if it does not
 		(channel && channel.port1 || global).addEventListener("message", function (event) {
+			// If event data is not a string, i.e. doesn't implement split,
+			// we didn't send it
+			if (!event.data || !event.data.split) {
+				return;
+			}
+			
 			// Split the identifier into the name and numeric id
 			let [name, immediateID] = event.data.split("$");
 			
