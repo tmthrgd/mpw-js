@@ -53,36 +53,48 @@ this.addEventListener("message", function (e) {
 			var url = `data:application/javascript;charset=utf-8,${encodeURIComponent(wrkrsrc)}`;
 		}
 		
-		// A unique id to ensure that ONLY valid messages are accepted
+		// Create a WebWorker using a blob: url
+		let scryptWorker = new Worker(url);
+		
+		// The numeric identifier of the next dispatched scrypt call
+		let scryptID = 1;
+		
+		// The Promise callbacks, indexed by numeric identifier
+		let scryptcbs = { };
+		
+		// A unique id prefix to ensure that ONLY valid messages are accepted
 		let messageName = `scrypt-${Math.random()}`.replace("0.", "");
+		
+		// Add a message event listener for worker responses
+		// Pull out the needed values from the e argument
+		scryptWorker.addEventListener("message", function ({data: {id, data, err}}) {
+			// Split the identifier into the name and numeric id
+			let [name, scryptID] = id.split("$");
+			
+			// Check the name is valid, if it's not we didn't send it
+			if (name === messageName) {
+				// Retrieve the resolve and reject callbacks for the promise
+				let [resolve, reject] = scryptcbs[scryptID];
+				
+				// If we were sent data it didn't throw an error, if not...
+				data ? resolve(data) : reject(err);
+				
+				// Delete references to the callbacks now we've used them
+				delete scryptcbs[scryptID];
+			}
+		});
 		
 		// This is the scrypt function
 		// It returns a promise which will resolve when the worker responds
 		return (passwd, salt, n, r, p, buflen) => new Promise(function (resolve, reject) {
-			// Create a WebWorker using a blob: url
-			let scryptWorker = new Worker(url);
+			// Store the callbacks
+			// These will be invoked from the worker message handler
+			scryptcbs[scryptID] = [resolve, reject];
 			
-			// Add a message event listener for worker responses
-			// Pull out the needed values from the e argument
-			scryptWorker.addEventListener("message", function workerListener({data: {id, data, err}}) {
-				// Check the name is valid, if it's not we didn't send it
-				if (id === messageName) {
-					// If we were sent data it didn't throw an error, if not...
-					data ? resolve(data) : reject(err);
-					
-					// Remove the message listener from the worker
-					// in preparation of garbage collection
-					scryptWorker.removeEventListener("message", workerListener);
-					
-					// Remove reference to worker
-					scryptWorker = null;
-				}
-			});
-			
-			// Send the worker a message w/ the message id and all arguments,
+			// Send the worker a message w/ a unique id and all arguments,
 			// transferring ownership of passwd and salt to the worker
 			scryptWorker.postMessage({
-				id: messageName,
+				id: [messageName, scryptID++].join("$"),
 				
 				passwd: passwd,
 				salt: salt,
