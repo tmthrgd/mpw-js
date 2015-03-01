@@ -1,5 +1,7 @@
 /*! by Tom Thorogood <me@tomthorogood.co.uk> */
-/*! This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
+/*! This work is licensed under the Creative Commons Attribution 4.0
+International License. To view a copy of this license, visit
+http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
 // A TextEncoder in UTF-8 to convert strings to `Uint8Array`s
 const txtencoder = new TextEncoder;
@@ -19,7 +21,7 @@ class MPW {
 			// the password seed
 			this.key = MPW.calculateKey(name, password, version);
 		} else {
-			this.key = Promise.reject(new Error("Algorithm version " + version + " not implemented"));
+			this.key = Promise.reject(new Error(`Algorithm version ${version} not implemented`));
 		}
 	}
 	
@@ -267,10 +269,10 @@ class MPW {
 	static test() {
 		// Pretty simple test here
 		return new MPW("user", "password").generate("example.com", 1, null, "long", MPW.NS).then(function (password) {
-			console.assert(password === "ZedaFaxcZaso9*", "Self-test failed; expected: ZedaFaxcZaso9*; got: " + password);
+			console.assert(password === "ZedaFaxcZaso9*", `Self-test failed; expected: ZedaFaxcZaso9*; got: ${password}`);
 			return password === "ZedaFaxcZaso9*"
 				? Promise.resolve()
-				: Promise.reject(new Error("Self-test failed; expected: ZedaFaxcZaso9*; got: " + password));
+				: Promise.reject(new Error(`Self-test failed; expected: ZedaFaxcZaso9*; got: ${password}`));
 		});
 	}
 }

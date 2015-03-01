@@ -7,7 +7,7 @@ var MPW = function MPW(name, password) {
   if (version >= 0 && version <= $MPW.VERSION) {
     this.key = $MPW.calculateKey(name, password, version);
   } else {
-    this.key = Promise.reject(new Error("Algorithm version " + version + " not implemented"));
+    this.key = Promise.reject(new Error(("Algorithm version " + version + " not implemented")));
   }
 };
 var $MPW = MPW;
@@ -173,8 +173,8 @@ var $MPW = MPW;
   test: function() {
     "use strict";
     return new $MPW("user", "password").generate("example.com", 1, null, "long", $MPW.NS).then(function(password) {
-      console.assert(password === "ZedaFaxcZaso9*", "Self-test failed; expected: ZedaFaxcZaso9*; got: " + password);
-      return password === "ZedaFaxcZaso9*" ? Promise.resolve() : Promise.reject(new Error("Self-test failed; expected: ZedaFaxcZaso9*; got: " + password));
+      console.assert(password === "ZedaFaxcZaso9*", ("Self-test failed; expected: ZedaFaxcZaso9*; got: " + password));
+      return password === "ZedaFaxcZaso9*" ? Promise.resolve() : Promise.reject(new Error(("Self-test failed; expected: ZedaFaxcZaso9*; got: " + password)));
     });
   }
 });

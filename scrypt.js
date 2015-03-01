@@ -1,64 +1,60 @@
 /*! by Tom Thorogood <me@tomthorogood.co.uk> */
-/*! This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
+/*! This work is licensed under the Creative Commons Attribution 4.0
+International License. To view a copy of this license, visit
+http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
 window.scrypt = function () {
 	// 512MiB, the default 32MiB caused errors for unknown reasons
 	const SCRYPT_MEMORY = 512 * 1024 * 1024;
 	
-	try {
+	if (window.Worker) {
 		// Get all the <script> tags the latest one is used to resolve
 		// scrypt-asm.js, it will be the currently executing <script> tag,
 		// so long as defer and async were NOT used
 		let scripts = document.getElementsByTagName("script");
 		
-		// Create a WebWorker using a blob: url create from a function converted toString
-		// This saves uses a third-file for scrypt but is slightly hack-y
-		// It is a self-invoking anonymous function
-		let scryptwrkr = new Worker(URL.createObjectURL(new Blob([ ("!" + function () {
-			// 512MiB, the default 32MiB caused errors for unknown reasons
-			// Have to redeclare here as definition above is not accessible
-			// from WebWorker
-			const SCRYPT_MEMORY = 512 * 1024 * 1024;
+		// The src of the worker
+		let wrkrsrc =
+`// Import scrypt-asm.js which is scrypt.c compiled w/ Emscripten
+importScripts("${window.SCRYPTASM_PATH || `${scripts[scripts.length - 1].src}/../scrypt-asm.js`}");
+
+// Create the Emscripten factory
+var scrypt_module = scrypt_module_factory(${SCRYPT_MEMORY});
+
+// Wait for incoming messages
+// Pull out the needed values from the e argument
+this.addEventListener("message", function (e) {
+	try {
+		// Invoke the Emscripten compiled crypto_scrypt routine
+		var data = scrypt_module.crypto_scrypt(e.data.passwd, e.data.salt, e.data.n, e.data.r, e.data.p, e.data.buflen);
+		
+		// Send the data back to the DOM transferring ownership
+		// of data to the DOM
+		this.postMessage({
+			id: e.data.id,
 			
-			// Import scrypt-asm.js which is scrypt.c compiled w/ Emscripten
-			// {{scrypt-asm.js}} is a placeholder for the full path to scrypt-asm.js
-			// This is hack-y because blob: urls (obviously) cannot resolve
-			// relative paths from a http: resource
-			importScripts("{{scrypt-asm.js}}");
+			data: data
+		}, [ data.buffer ]);
+	} catch(err) {
+		// Send the error back to the DOM
+		this.postMessage({
+			id: e.data.id,
 			
-			// Create the Emscripten factory
-			let scrypt_module = scrypt_module_factory(SCRYPT_MEMORY);
-			
-			// Rather than import traceur-runtime.js w/ importScripts just polyfill it
-			// Yuck
-			const $traceurRuntime = { assertObject: a => a };
-			
-			// Wait for incoming messages
-			// Pull out the needed values from the e argument
-			this.addEventListener("message", function ({data: {id, passwd, salt, n, r, p, buflen}}) {
-				try {
-					// Invoke the Emscripten compiled crypto_scrypt routine
-					let data = scrypt_module.crypto_scrypt(passwd, salt, n, r, p, buflen);
-					
-					// Send the data back to the DOM transferring ownership
-					// of data to the DOM
-					this.postMessage({
-						id: id,
-						
-						data: data
-					}, [ data.buffer ]);
-				} catch(err) {
-					// Send the error back to the DOM
-					this.postMessage({
-						id: id,
-						
-						err: err
-					});
-				}
-			}, false);
-		} + "()").replace("{{scrypt-asm.js}}", window.SCRYPTASM_PATH || (scripts[scripts.length - 1].src + "/../scrypt-asm.js")) ], { type: "application/javascript" })));
-		// This would instead create a WebWorker using a third-file
-		//let scryptwrkr = new Worker("scrypt-worker.js");
+			err: err
+		});
+	}
+}, false);`;
+		
+		if (window.URL && window.Blob) {
+			// Create a blob: url to contain wrkrsrc
+			var url = URL.createObjectURL(new Blob([ wrkrsrc ], { type: "application/javascript" }));
+		} else {
+			// Create a data: url to contain wrkrsrc
+			var url = `data:application/javascript;charset=utf-8,${encodeURIComponent(wrkrsrc)}`;
+		}
+		
+		// Create a WebWorker using a blob: url
+		let scryptwrkr = new Worker(url);
 		
 		// The numeric identifier of the next dispatched scrypt call
 		let scryptID = 1;
@@ -67,7 +63,7 @@ window.scrypt = function () {
 		let scryptcbs = { };
 		
 		// A unique id prefix to ensure that ONLY valid messages are accepted
-		let messageName = ("scrypt-" + Math.random()).replace("0.", "");
+		let messageName = `scrypt-${Math.random()}`.replace("0.", "");
 		
 		// Add a message event listener for worker responses
 		// Pull out the needed values from the e argument
@@ -108,10 +104,7 @@ window.scrypt = function () {
 				buflen: buflen
 			}, [ passwd.buffer, salt.buffer ]);
 		});
-	} catch(e) {
-		// If the WebWorker code above fails we fallback
-		console.error(e);
-		
+	} else {
 		// This will hold the Emscripten factory
 		let scrypt_module = null;
 		

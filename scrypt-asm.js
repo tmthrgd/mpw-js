@@ -10,7 +10,7 @@ function aa() {
   }
 }
 var q, s;
-s || (s = eval("(function() { try { return Module || {} } catch(e) { return {} } })()"));
+s || (s = (function() { try { return Module || {} } catch(e) { return {} } })());
 var ba = {}, t;
 for(t in s) {
   s.hasOwnProperty(t) && (ba[t] = s[t])
