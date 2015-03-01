@@ -1,5 +1,7 @@
 /*! by Tom Thorogood <me@tomthorogood.co.uk> */
-/*! This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
+/*! This work is licensed under the Creative Commons Attribution 4.0
+International License. To view a copy of this license, visit
+http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
 let mpw, fullname, masterpassword, version, sitename, counter, context, template, type, resulttype, password, error, id = 0;
 
