@@ -59,6 +59,10 @@ window.ghcallback = function ghcallback(response) {
 	Promise.all(tests.map(function runTest(testCase) {
 		testCase = cases[testCase];
 		
+		if (window.performance) {
+			var start = performance.now();
+		}
+		
 		var test = document.createElement("div");
 		test.classList.add("test");
 		test.textContent = "Test " + testCase.testID + " Running";
@@ -83,6 +87,10 @@ window.ghcallback = function ghcallback(response) {
 			test.classList.add("completed", "success");
 			test.textContent = "Test " + testCase.testID + " Passed";
 			
+			if (window.performance) {
+				test.textContent += " (after " + (performance.now() - start) + "ms)";
+			}
+			
 			passed.textContent = ++passed.textContent;
 			completed.textContent = ++completed.textContent;
 			
@@ -90,6 +98,10 @@ window.ghcallback = function ghcallback(response) {
 		}, function (err) {
 			test.classList.add("completed", "failure");
 			test.textContent = "Test " + testCase.testID + " Failed; " + err;
+			
+			if (window.performance) {
+				test.textContent += " (after " + (performance.now() - start) + "ms)";
+			}
 			
 			failed.textContent = ++failed.textContent;
 			completed.textContent = ++completed.textContent;
