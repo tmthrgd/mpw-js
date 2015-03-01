@@ -8,23 +8,31 @@ window.scrypt = function() {
     } else {
       var url = ("data:application/javascript;charset=utf-8," + encodeURIComponent(wrkrsrc));
     }
+    var scryptWorker = new Worker(url);
+    var scryptID = 1;
+    var scryptcbs = {};
     var messageName = ("scrypt-" + Math.random()).replace("0.", "");
+    scryptWorker.addEventListener("message", function($__0) {
+      var $__2 = $__0.data,
+          id = $__2.id,
+          data = $__2.data,
+          err = $__2.err;
+      var $__3 = id.split("$"),
+          name = $__3[0],
+          scryptID = $__3[1];
+      if (name === messageName) {
+        var $__4 = scryptcbs[$traceurRuntime.toProperty(scryptID)],
+            resolve = $__4[0],
+            reject = $__4[1];
+        data ? resolve(data) : reject(err);
+        delete scryptcbs[$traceurRuntime.toProperty(scryptID)];
+      }
+    });
     return (function(passwd, salt, n, r, p, buflen) {
       return new Promise(function(resolve, reject) {
-        var scryptWorker = new Worker(url);
-        scryptWorker.addEventListener("message", function workerListener($__0) {
-          var $__2 = $__0.data,
-              id = $__2.id,
-              data = $__2.data,
-              err = $__2.err;
-          if (id === messageName) {
-            data ? resolve(data) : reject(err);
-            scryptWorker.removeEventListener("message", workerListener);
-            scryptWorker = null;
-          }
-        });
+        scryptcbs[$traceurRuntime.toProperty(scryptID)] = [resolve, reject];
         scryptWorker.postMessage({
-          id: messageName,
+          id: [messageName, scryptID++].join("$"),
           passwd: passwd,
           salt: salt,
           n: n,
