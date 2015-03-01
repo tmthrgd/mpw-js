@@ -3,7 +3,7 @@
 International License. To view a copy of this license, visit
 http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
-let mpw, fullname, masterpassword, version, sitename, counter, context, template, type, resulttype, password, error, id = 0;
+var mpw, fullname, masterpassword, version, sitename, counter, context, template, type, resulttype, password, error, id = 0;
 
 function updateMPW() {
 	error.textContent = password.value = "";
@@ -32,13 +32,12 @@ function updatePassword() {
 		return;
 	}
 	
-	let cid = ++id;
+	var cid = ++id;
 	
 	if (type.value === "answer") {
 		var value = mpw.generateAnswer(sitename.value, counter.valueAsNumber, context.value, template.value);
 	} else {
-		let Type = type.value[0].toUpperCase() + type.value.slice(1).toLowerCase();
-		
+		var Type = type.value[0].toUpperCase() + type.value.slice(1).toLowerCase();
 		var value = mpw["generate" + Type](sitename.value, counter.valueAsNumber, template.value);
 	}
 	
