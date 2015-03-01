@@ -2,6 +2,7 @@
 <html lang=en>
 <head>
 	<meta charset=utf-8>
+	<meta http-equiv=Content-Security-Policy content="default-src 'none'; style-src 'self'; script-src 'self' 'unsafe-inline' https://api.github.com https://cdnjs.cloudflare.com; img-src https://i.creativecommons.org https://licensebuttons.net; child-src 'self'">
 	<!-- by Tom Thorogood <me@tomthorogood.co.uk> -->
 	<!-- This work is licensed under the Creative Commons Attribution
 		 4.0 International License. To view a copy of this license,
@@ -94,21 +95,23 @@ Percival and licensed as follows:
 	</footer>
 	
 	<script>
+	// If the needed ES6 features aren't supported, ES6 will be set to false
+	// and suffix to ".es5.js"
+	// These will be overridden if ES6 is supported
+	var ES6 = false;
+	var esdir = "es5/";
+	</script>
+	<script>
 	// Test for required ES6 features
-	// This test must be in an eval call as they are language
-	// features and ES5 parsers will hard-fail otherwise
-	try {
-		// If the ES6 class, let, destructive assignment and rest arguments
-		// are supported, this will be successful and ES6 will be set to true
-		// and suffix to ".js"
-		eval("class $ES6 { constructor() { let b = true; this.b = b; } } const [ES6, esdir] = ((...args) => args)(new $ES6().b, '')");
-	} catch (e) {
-		// If the needed ES6 features aren't supported, ES6 will be set to false
-		// and suffix to ".es5.js"
-		var ES6 = false;
-		var esdir = "es5/";
-	}
+	// This test must be in a seperate script tag as they are
+	// language features and ES5 parsers will hard-fail otherwise
 	
+	// If the ES6 class, let, destructive assignment and rest arguments
+	// are supported, this will be successful and ES6 will be set to true
+	// and suffix to ".js"
+	class $ES6 { constructor() { let b = true; this.b = b; } } const [ES6, esdir] = ((...args) => args)(new $ES6().b, ``)
+	</script>
+	<script>
 	// If ES6 is not supported we must include traceur-runtime.js
 	ES6 || document.write("<script src=../lib/traceur-runtime.js><\/script>");
 	
