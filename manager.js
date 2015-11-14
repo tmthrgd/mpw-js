@@ -101,9 +101,4 @@ window.addEventListener("load", function () {
 	
 	updateType();
 	type.addEventListener("change", updateType, false);
-	
-	MPW.test().catch(function (err) {
-		console.error(err);
-		error.textContent = err.toString();
-	});
 }, false);
