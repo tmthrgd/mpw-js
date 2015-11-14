@@ -1,6 +1,6 @@
 NODE_PREFIX=$(shell npm config get prefix)
 
-build: mkdir-es5 traceur-runtime.js es5/scrypt.js es5/mpw.js
+build: mkdir-es5 traceur-runtime.js es5/pbkdf2.js es5/scrypt.js es5/mpw.js
 
 traceur-runtime.js: ${NODE_PREFIX}/lib/node_modules/traceur/bin/traceur-runtime.js
 	cp $< $@

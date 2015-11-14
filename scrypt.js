@@ -1,155 +1,129 @@
-/*! by Tom Thorogood <me@tomthorogood.co.uk> */
-/*! This work is licensed under the Creative Commons Attribution 4.0
-International License. To view a copy of this license, visit
-http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
-
 window.scrypt = function () {
-	// 512MiB, the default 32MiB caused errors for unknown reasons
-	const SCRYPT_MEMORY = 512 * 1024 * 1024;
-	
-	if (window.Worker) {
-		// Get all the <script> tags the latest one is used to resolve
-		// scrypt-asm.js, it will be the currently executing <script> tag,
-		// so long as defer and async were NOT used
-		let scripts = document.getElementsByTagName("script");
+	// https://github.com/golang/crypto/blob/master/scrypt/scrypt.go
+	function salsaXOR(tmp, inp, out) {
+		let w = [ ];
+		let x = [ ];
 		
-		// The src of the worker
-		let wrkrsrc =
-`// Import scrypt-asm.js which is scrypt.c compiled w/ Emscripten
-importScripts("${window.SCRYPTASM_PATH || `${scripts[scripts.length - 1].src}/../scrypt-asm.js`}");
-
-// Create the Emscripten factory
-var scrypt_module = scrypt_module_factory(${SCRYPT_MEMORY});
-
-// Wait for incoming messages
-// Pull out the needed values from the e argument
-this.addEventListener("message", function (e) {
-	try {
-		// Invoke the Emscripten compiled crypto_scrypt routine
-		var data = scrypt_module.crypto_scrypt(e.data.passwd, e.data.salt, e.data.n, e.data.r, e.data.p, e.data.buflen);
-		
-		// Send the data back to the DOM transferring ownership
-		// of data to the DOM
-		this.postMessage({
-			id: e.data.id,
-			
-			data: data
-		}, [ data.buffer ]);
-	} catch(err) {
-		// Send the error back to the DOM
-		this.postMessage({
-			id: e.data.id,
-			
-			err: err
-		});
-	}
-}, false);`;
-		
-		if (window.URL && window.Blob) {
-			// Create a blob: url to contain wrkrsrc
-			var url = URL.createObjectURL(new Blob([ wrkrsrc ], { type: "application/javascript" }));
-		} else {
-			// Create a data: url to contain wrkrsrc
-			var url = `data:application/javascript;charset=utf-8,${encodeURIComponent(wrkrsrc)}`;
+		for (let i = 0; i < 16; i++) {
+			x[i] = w[i] = tmp[i] ^ inp[i];
 		}
 		
-		// Create a WebWorker using a blob: url
-		let scryptWorker = new Worker(url);
-		
-		// The numeric identifier of the next dispatched scrypt call
-		let scryptID = 1;
-		
-		// The Promise callbacks, indexed by numeric identifier
-		let scryptcbs = { };
-		
-		// A unique id prefix to ensure that ONLY valid messages are accepted
-		let messageName = `scrypt-${Math.random()}`.replace("0.", "");
-		
-		// Add a message event listener for worker responses
-		// Pull out the needed values from the e argument
-		scryptWorker.addEventListener("message", function ({data: {id, data, err}}) {
-			// Split the identifier into the name and numeric id
-			let [name, scryptID] = id.split("$");
+		for (let i = 0, u; i < 8; i += 2) {
+			u = x[0]  + x[12]; x[4]  ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[4]  + x[0];  x[8]  ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[8]  + x[4];  x[12] ^= (u << 13) | (u >>> (32 - 13));
+			u = x[12] + x[8];  x[0]  ^= (u << 18) | (u >>> (32 - 18));
 			
-			// Check the name is valid, if it's not we didn't send it
-			if (name === messageName) {
-				// Retrieve the resolve and reject callbacks for the promise
-				let [resolve, reject] = scryptcbs[scryptID];
-				
-				// If we were sent data it didn't throw an error, if not...
-				data ? resolve(data) : reject(err);
-				
-				// Delete references to the callbacks now we've used them
-				delete scryptcbs[scryptID];
-			}
-		});
-		
-		// This is the scrypt function
-		// It returns a promise which will resolve when the worker responds
-		return (passwd, salt, n, r, p, buflen) => new Promise(function (resolve, reject) {
-			// Store the callbacks
-			// These will be invoked from the worker message handler
-			scryptcbs[scryptID] = [resolve, reject];
+			u = x[5]  + x[1];  x[9]  ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[9]  + x[5];  x[13] ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[13] + x[9];  x[1]  ^= (u << 13) | (u >>> (32 - 13));
+			u = x[1]  + x[13]; x[5]  ^= (u << 18) | (u >>> (32 - 18));
 			
-			// Send the worker a message w/ a unique id and all arguments,
-			// transferring ownership of passwd and salt to the worker
-			scryptWorker.postMessage({
-				id: [messageName, scryptID++].join("$"),
-				
-				passwd: passwd,
-				salt: salt,
-				n: n,
-				r: r,
-				p: p,
-				buflen: buflen
-			}, [ passwd.buffer, salt.buffer ]);
-		});
-	} else {
-		// This will hold the Emscripten factory
-		let scrypt_module = null;
+			u = x[10] + x[6];  x[14] ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[14] + x[10]; x[2]  ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[2]  + x[14]; x[6]  ^= (u << 13) | (u >>> (32 - 13));
+			u = x[6]  + x[2];  x[10] ^= (u << 18) | (u >>> (32 - 18));
+			
+			u = x[15] + x[11]; x[3]  ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[3]  + x[15]; x[7]  ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[7]  + x[3];  x[11] ^= (u << 13) | (u >>> (32 - 13));
+			u = x[11] + x[7];  x[15] ^= (u << 18) | (u >>> (32 - 18));
+			
+			u = x[0] + x[3]; x[1] ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[1] + x[0]; x[2] ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[2] + x[1]; x[3] ^= (u << 13) | (u >>> (32 - 13));
+			u = x[3] + x[2]; x[0] ^= (u << 18) | (u >>> (32 - 18));
+			
+			u = x[5] + x[4]; x[6] ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[6] + x[5]; x[7] ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[7] + x[6]; x[4] ^= (u << 13) | (u >>> (32 - 13));
+			u = x[4] + x[7]; x[5] ^= (u << 18) | (u >>> (32 - 18));
+			
+			u = x[10] + x[9];  x[11] ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[11] + x[10]; x[8]  ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[8]  + x[11]; x[9]  ^= (u << 13) | (u >>> (32 - 13));
+			u = x[9]  + x[8];  x[10] ^= (u << 18) | (u >>> (32 - 18));
+			
+			u = x[15] + x[14]; x[12] ^= (u << 7)  | (u >>> (32 - 7));
+			u = x[12] + x[15]; x[13] ^= (u << 9)  | (u >>> (32 - 9));
+			u = x[13] + x[12]; x[14] ^= (u << 13) | (u >>> (32 - 13));
+			u = x[14] + x[13]; x[15] ^= (u << 18) | (u >>> (32 - 18));
+		}
 		
-		// Create a new async script tag to add to the DOM
-		// This will 'import' scrypt_module_factory
-		let script = document.createElement("script");
-		script.src = window.SCRYPTASM_PATH || "scrypt-asm.js", script.async = true;
+		for (let i = 0; i < 16; i++) {
+			out[i] = tmp[i] = x[i] + w[i];
+		}
+	}
+	
+	function blockMix(inp, out, r) {
+		let tmp = inp.slice((2 * r - 1) * 16, (2 * r - 1) * 16 + 16);
 		
-		// Add an event handler to the script load event to
-		// create the factory as soon as we possibly can
-		script.addEventListener("load", function () {
-			// Only if it hasn't already been created
-			if (!scrypt_module) {
-				// Create the factory
-				scrypt_module = scrypt_module_factory(SCRYPT_MEMORY);
+		for (let i = 0; i < 2 * r; i += 2) {
+			salsaXOR(tmp, inp.subarray(i * 16), out.subarray(i * 8));
+			salsaXOR(tmp, inp.subarray(i * 16 + 16), out.subarray(i * 8 + r * 16));
+		}
+	}
+	
+	function smix(b, r, N, v, x, y) {
+		let bView = new DataView(b.buffer, b.byteOffset, b.byteLength);
+		
+		for (let i = 0, j = 0; i < x.length; i++, j += 4) {
+			x[i] = bView.getUint32(j, true/*little-endian*/);
+		}
+		
+		for (let i = 0; i < N; i += 2) {
+			v.set(x, i * 32 * r);
+			blockMix(x, y, r);
+			
+			v.set(y, (i + 1) * 32 * r);
+			blockMix(y, x, r);
+		}
+		
+		for (let i = 0, j, sh32 = Math.pow(2, 32); i < N; i += 2) {
+			j = (x[(2 * r - 1) * 16] | (x[(2 * r - 1) * 16 + 1] * sh32)) & (N - 1);
+			
+			for (let k = 0; k < x.length; k++) {
+				x[k] ^= v[j * 32 * r + k];
 			}
-		}, false);
+			
+			blockMix(x, y, r);
+			
+			j = (y[(2 * r - 1) * 16] | (y[(2 * r - 1) * 16 + 1] * sh32)) & (N - 1);
+			
+			for (let k = 0; k < x.length; k++) {
+				y[k] ^= v[j * 32 * r + k];
+			}
+			
+			blockMix(y, x, r);
+		}
 		
-		// Add the script tag to the DOM
-		// This begins loading scrypt-asm.js
-		document.body.appendChild(script);
+		for (let i = 0, j = 0; i < x.length; i++, j += 4) {
+			bView.setUint32(j, x[i], true/*little-endian*/);
+		}
+	}
+	
+	return function(passphrase, salt, N, r, p, keyLen) {
+		if (r * p >= Math.pow(2, 30)) {
+			return Promise.reject(Error("Parameters r and p are too large"));
+		}
 		
-		// This is the scrypt function
-		// It returns a promise which will resolve asynchronously
-		return (passwd, salt, n, r, p, buflen) => new Promise(function (resolve, reject) {
+		if (N < 2 || N & (N - 1) != 0 || N > Math.pow(2, 32) - 1) {
+			return Promise.reject(Error("Argument N is invalid; N must be > 1, a power of 2 and less than 2^32"));
+		}
+		
+		let x = new Uint32Array(32 * r);
+		let y = new Uint32Array(32 * r);
+		let v = new Uint32Array(32 * N * r);
+		
+		let b = pbkdf2(passphrase, salt, 1, p * 128 * r, "SHA-256");
+		
+		for (let i = 0; i < p; i++) {
 			// setImmediate (a 0-delay setTimeout of sorts) is needed
 			// here so that this code is asynchronous and will not block
 			// the UI thread
-			window.setImmediate(function () {
-				// If the factory hasn't been created yet (the load event didn't fire)
-				// we create it here, if it has loaded that is
-				if (!scrypt_module) {
-					// Has scrypt-asm.js been loaded yet?
-					if (!window.scrypt_module_factory) {
-						return reject(new Error("scrypt-asm.js not loaded"));
-					}
-					
-					// Create the factory
-					scrypt_module = scrypt_module_factory(SCRYPT_MEMORY);
-				}
-				
-				// Invoke the Emscripten compiled crypto_scrypt routine
-				// resolving the promise w/ the result
-				resolve(scrypt_module.crypto_scrypt(passwd, salt, n, r, p, buflen));
-			});
-		});
-	}
+			b = b.then(b => new Promise((resolve, reject) => window.setImmediate(() => (smix(b.subarray(i * 128 * r), r, N, v, x, y), resolve(b)))));
+		}
+		
+		return b.then(b => pbkdf2(passphrase, b, 1, keyLen, "SHA-256"));
+	};
 }();
