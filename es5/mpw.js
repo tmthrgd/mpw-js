@@ -1,4 +1,3 @@
-var txtencoder = new TextEncoder;
 var MPW = function MPW(name, password) {
   "use strict";
   var version = arguments[2] !== (void 0) ? arguments[2] : $MPW.VERSION;
@@ -25,10 +24,10 @@ var $MPW = MPW;
     }
     try {
       var siteCharLength = site.length;
-      site = txtencoder.encode(site);
-      NS = txtencoder.encode(NS);
+      site = $MPW.txtencoder.encode(site);
+      NS = $MPW.txtencoder.encode(NS);
       if (context) {
-        context = txtencoder.encode(context);
+        context = $MPW.txtencoder.encode(context);
       }
       var data = new Uint8Array(NS.length + 4 + site.length + 4 + (context ? 4 + context.length : 0));
       var dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
@@ -142,9 +141,9 @@ var $MPW = MPW;
     }
     try {
       var nameCharLength = name.length;
-      password = txtencoder.encode(password);
-      name = txtencoder.encode(name);
-      var NS = txtencoder.encode($MPW.NS);
+      password = $MPW.txtencoder.encode(password);
+      name = $MPW.txtencoder.encode(name);
+      var NS = $MPW.txtencoder.encode($MPW.NS);
       var salt = new Uint8Array(NS.length + 4 + name.length);
       var saltView = new DataView(salt.buffer, salt.byteOffset, salt.byteLength);
       var i = 0;
@@ -178,6 +177,7 @@ var $MPW = MPW;
     });
   }
 });
+MPW.txtencoder = new TextEncoder;
 MPW.VERSION = 3;
 MPW.NS = "com.lyndir.masterpassword";
 MPW.PasswordNS = "com.lyndir.masterpassword";

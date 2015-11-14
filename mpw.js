@@ -3,9 +3,6 @@
 International License. To view a copy of this license, visit
 http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
-// A TextEncoder in UTF-8 to convert strings to `Uint8Array`s
-const txtencoder = new TextEncoder;
-
 // JS Web Crypto implementation of http://masterpasswordapp.com/algorithm.html
 class MPW {
 	constructor(name, password, version = MPW.VERSION) {
@@ -41,13 +38,13 @@ class MPW {
 			let nameCharLength = name.length;
 			
 			// Convert password string to a Uint8Array w/ UTF-8
-			password = txtencoder.encode(password);
+			password = MPW.txtencoder.encode(password);
 			
 			// Convert name string to a Uint8Array w/ UTF-8
-			name = txtencoder.encode(name);
+			name = MPW.txtencoder.encode(name);
 			
 			// Convert MPW.NS string to a Uint8Array w/ UTF-8
-			let NS = txtencoder.encode(MPW.NS);
+			let NS = MPW.txtencoder.encode(MPW.NS);
 			
 			// Create salt array and a DataView representing it
 			var salt = new Uint8Array(
@@ -109,14 +106,14 @@ class MPW {
 			let siteCharLength = site.length;
 			
 			// Convert salt string to a Uint8Array w/ UTF-8
-			site = txtencoder.encode(site);
+			site = MPW.txtencoder.encode(site);
 			
 			// Convert NS string to a Uint8Array w/ UTF-8
-			NS = txtencoder.encode(NS);
+			NS = MPW.txtencoder.encode(NS);
 			
 			if (context) {
 				// Convert context string to a Uint8Array w/ UTF-8
-				context = txtencoder.encode(context);
+				context = MPW.txtencoder.encode(context);
 			}
 			
 			// Create data array and a DataView representing it
@@ -276,6 +273,9 @@ class MPW {
 		});
 	}
 }
+
+// A TextEncoder in UTF-8 to convert strings to `Uint8Array`s
+MPW.txtencoder = new TextEncoder;
 
 // The latest version of MPW supported
 MPW.VERSION = 3;
