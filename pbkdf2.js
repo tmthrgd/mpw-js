@@ -90,6 +90,7 @@ window.pbkdf2 = function () {
 					iterations: iter,
 					hash: hash
 				}, key, keyLen * 8))
+				.then(key => new Uint8Array(key))
 				.catch(err => (err.name === "OperationError")
 					? (window.pbkdf2 = pbkdf2_js).apply(self, args)
 					: Promise.reject(err));
