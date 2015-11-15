@@ -77,10 +77,10 @@ window.scrypt = function() {
     }
   }
   function blockMix(inp, out, r) {
-    var tmp = inp.slice((2 * r - 1) * 16, (2 * r - 1) * 16 + 16);
+    var tmp = inp.slice((2 * r - 1) * 16, (2 * r) * 16);
     for (var i = 0; i < 2 * r; i += 2) {
       salsaXOR(tmp, inp.subarray(i * 16), out.subarray(i * 8));
-      salsaXOR(tmp, inp.subarray(i * 16 + 16), out.subarray(i * 8 + r * 16));
+      salsaXOR(tmp, inp.subarray((i + 1) * 16), out.subarray((i + 2 * r) * 8));
     }
   }
   function smix(b, r, N, v, x, y) {
@@ -104,7 +104,7 @@ window.scrypt = function() {
       }
       blockMix(x, y, r);
       j$__4 = (y[$traceurRuntime.toProperty((2 * r - 1) * 16)] | (y[$traceurRuntime.toProperty((2 * r - 1) * 16 + 1)] * sh32)) & (N - 1);
-      for (var k$__5 = 0; k$__5 < x.length; k$__5++) {
+      for (var k$__5 = 0; k$__5 < y.length; k$__5++) {
         y[$traceurRuntime.toProperty(k$__5)] ^= v[$traceurRuntime.toProperty(j$__4 * 32 * r + k$__5)];
       }
       blockMix(y, x, r);
@@ -116,10 +116,10 @@ window.scrypt = function() {
   }
   return function(passphrase, salt, N, r, p, keyLen) {
     if (r * p >= Math.pow(2, 30)) {
-      return Promise.reject(Error("Parameters r and p are too large"));
+      return Promise.reject(new Error("Parameters r and p are too large"));
     }
-    if (N < 2 || N & (N - 1) != 0 || N > Math.pow(2, 32) - 1) {
-      return Promise.reject(Error("Argument N is invalid; N must be > 1, a power of 2 and less than 2^32"));
+    if (N < 2 || N & (N - 1) != 0 || N > Number.MAX_SAFE_INTEGER) {
+      return Promise.reject(new Error("Argument N is invalid; N must be > 1, a power of 2 and less than 2^53"));
     }
     var x = new Uint32Array(32 * r);
     var y = new Uint32Array(32 * r);

@@ -22,7 +22,7 @@ window.pbkdf2 = function() {
         hashLen = 512 / 8;
         break;
       default:
-        return Promise.reject(new Error("Invalid hash algorithm"));
+        return Promise.reject(new Error("Invalid argument hash"));
     }
     var numBlocks = ((keyLen + hashLen - 1) / hashLen) | 0;
     var data = new Uint8Array(salt.length + 4);
@@ -83,13 +83,15 @@ window.pbkdf2 = function() {
           iterations: iter,
           hash: hash
         }, key, keyLen * 8);
+      })).then((function(key) {
+        return new Uint8Array(key);
       })).catch((function(err) {
         return (err.name === "OperationError") ? (window.pbkdf2 = pbkdf2_js).apply(self, args) : Promise.reject(err);
       }));
     };
   } else {
     return function(password, salt, iter, keyLen, hash) {
-      var hashAlg = CryptoJS.algo[$traceurRuntime.toProperty(hash)] || CryptoJS.algo[$traceurRuntime.toProperty(hash.replace("-", ""))];
+      var hashAlg = CryptoJS.algo[$traceurRuntime.toProperty(hash.name || hash)] || CryptoJS.algo[$traceurRuntime.toProperty((hash.name || hash).replace("-", ""))];
       if (!hashAlg) {
         return Promise.reject(new Error("Invalid argument hash"));
       }
