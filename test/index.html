@@ -82,6 +82,10 @@ mpw-js is a JavaScript + Web Crypto implementation of the Master Password App al
 		document.write("<script src=https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/lib-typedarrays-min.js><\/script>");
 	}
 	
+	if (!Number.MAX_SAFE_INTEGER) {
+		Number.MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+	}
+	
 	// If your borwser needs a lot of polyfills consider upgrading
 	// to a more modern feature rich browser, if you are a browser
 	// developer considering adding these much needed features already!
