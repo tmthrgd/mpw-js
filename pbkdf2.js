@@ -1,3 +1,8 @@
+/*! by Tom Thorogood <me@tomthorogood.co.uk> */
+/*! This work is licensed under the Creative Commons Attribution 4.0
+International License. To view a copy of this license, visit
+http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
+
 // https://bugzilla.mozilla.org/show_bug.cgi?id=554827
 window.pbkdf2 = function () {
 	// https://github.com/golang/crypto/blob/master/pbkdf2/pbkdf2.go
