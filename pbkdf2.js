@@ -25,12 +25,12 @@ window.pbkdf2 = function () {
 				hashLen = 512 / 8;
 				break;
 			default:
-				return Promise.reject(new Error("Invalid hash algorithm"));
+				return Promise.reject(new Error("Invalid argument hash"));
 		}
 		
 		let numBlocks = ((keyLen + hashLen - 1) / hashLen) | 0;
 		
-		let data = new Uint8Array(salt.length + 4/*sizeof(uint32)*/);
+		let data     = new Uint8Array(salt.length + 4/*sizeof(uint32)*/);
 		let dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
 		
 		data.set(salt);
@@ -45,9 +45,9 @@ window.pbkdf2 = function () {
 				for (let block = 1, dki = 0; block <= numBlocks; block++, dki += hashLen) {
 					x = x.then(() => dataView.setUint32(salt.length, block, false/*big-endian*/))
 						.then(() => window.crypto.subtle.sign({
-								name: "HMAC",
-								hash: hash
-							}, key, data))
+							name: "HMAC",
+							hash: hash
+						}, key, data))
 						.then(pdk => (dk.set(new Uint8Array(pdk), dki), pdk));
 					
 					for (let n = 2; n <= iter; n++) {
@@ -71,14 +71,14 @@ window.pbkdf2 = function () {
 	}
 	
 	if (window.crypto.subtle) {
-		return function(password, salt, iter, keyLen, hash) {
+		return function (password, salt, iter, keyLen, hash) {
 			let self = this;
 			let args = arguments;
 			
 			return window.crypto.subtle.importKey("raw", password, {
-						name: "PBKDF2",
-						hash: hash
-					}, false/*not extractable*/, [ "deriveBits" ])
+					name: "PBKDF2",
+					hash: hash
+				}, false/*not extractable*/, [ "deriveBits" ])
 				.then(key => window.crypto.subtle.deriveBits({
 					name: "PBKDF2",
 					salt: salt,
@@ -90,8 +90,8 @@ window.pbkdf2 = function () {
 					: Promise.reject(err));
 		};
 	} else {
-		return function(password, salt, iter, keyLen, hash) {
-			let hashAlg = CryptoJS.algo[hash] || CryptoJS.algo[hash.replace("-", "")];
+		return function (password, salt, iter, keyLen, hash) {
+			let hashAlg = CryptoJS.algo[hash.name || hash] || CryptoJS.algo[(hash.name || hash).replace("-", "")];
 			
 			if (!hashAlg) {
 				return Promise.reject(new Error("Invalid argument hash"));
@@ -104,7 +104,7 @@ window.pbkdf2 = function () {
 				window.setImmediate(function () {
 					// Create crypto-js WordArrays from Uint8Arrays password and salt
 					password = CryptoJS.lib.WordArray.create(password);
-					salt  = CryptoJS.lib.WordArray.create(salt);
+					salt     = CryptoJS.lib.WordArray.create(salt);
 					
 					// Derive key using PBKDF2 w/ password and salt
 					let Ckey = CryptoJS.PBKDF2(password, salt, {
