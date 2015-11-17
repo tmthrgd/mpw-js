@@ -274,6 +274,6 @@ window.setImmediate || !(function (global) {
 			}, 0);
 		});
 	}, 0, true);
-})(undefined);
+})(undefined || window);
 
 //# sourceMappingURL=setImmediate-polyfill.js.map

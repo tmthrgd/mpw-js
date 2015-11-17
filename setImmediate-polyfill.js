@@ -208,4 +208,4 @@ window.setImmediate || !function (global) {
 		// the arguments
 		arg || (attachTo.setImmediate = (func, ...params) => global.setTimeout(() => func(...params), 0));
 	}, 0, true);
-}(this);
+}(this || window);
