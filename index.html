@@ -87,17 +87,17 @@ mpw-js is a JavaScript + Web Crypto implementation of the Master Password App al
 	
 	// If the ES6 class, let, destructive assignment and rest arguments
 	// are supported, this will be successful and ES6 will be set to true
-	// and suffix to ".js"
+	// and esdir to ""
 	class $ES6 { constructor() { let b = true; this.b = b; } }
 	const [ES6, esdir] = ((...args) => args)(new $ES6().b, ``);
 	</script>
 	<script>
 	// If the needed ES6 features aren't supported, ES6 will be set to false
-	// and suffix to ".es5.js"
+	// and esdir to "es5/"
 	var ES6 = false, esdir = "es5/";
 	
 	// If ES6 is not supported we must include traceur-runtime.js
-	ES6 || document.write("<script src=lib/traceur-runtime.js><\/script>");
+	ES6 || document.write("<script src=traceur-runtime.js><\/script>");
 	
 	// If setImmediate is not implemented we include the polyfill
 	window.setImmediate || document.write("<script src=" + esdir + "setImmediate-polyfill.js><\/script>");
@@ -128,6 +128,7 @@ mpw-js is a JavaScript + Web Crypto implementation of the Master Password App al
 		document.write("<script src=https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/lib-typedarrays-min.js><\/script>");
 	}
 	
+	// If MAX_SAFE_INTEGER (ES6) is not defined, define it
 	if (!Number.MAX_SAFE_INTEGER) {
 		Number.MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 	}
@@ -138,11 +139,11 @@ mpw-js is a JavaScript + Web Crypto implementation of the Master Password App al
 	// :D
 	
 	// Include the scrypt implementation
-	document.write("<script src=lib/" + esdir + "pbkdf2.js><\/script>");
-	document.write("<script src=lib/" + esdir + "scrypt.js><\/script>");
+	document.write("<script src=" + esdir + "lib/pbkdf2.js><\/script>");
+	document.write("<script src=" + esdir + "lib/scrypt.js><\/script>");
 	
 	// Include the MPW class
-	document.write("<script src=lib/" + esdir + "mpw.js><\/script>");
+	document.write("<script src=" + esdir + "lib/mpw.js><\/script>");
 	</script>
 	<script src=manager.js></script>
 </body>
