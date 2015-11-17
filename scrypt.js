@@ -107,11 +107,15 @@ window.scrypt = function () {
 		}
 	}
 	
+	// This is the scrypt function
+	// It returns a promise which will resolve asynchronously
 	return function (passphrase, salt, N, r, p, keyLen) {
+		// Check that p and r are not too large
 		if (r * p >= Math.pow(2, 30)) {
 			return Promise.reject(new Error("Parameters r and p are too large"));
 		}
 		
+		// Check that N is a power of 2 greater than 1 and that we can safely work on it in JS
 		if (N < 2 || N & (N - 1) != 0 || N > Number.MAX_SAFE_INTEGER) {
 			return Promise.reject(new Error("Argument N is invalid; N must be > 1, a power of 2 and less than 2^53"));
 		}

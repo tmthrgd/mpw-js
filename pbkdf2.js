@@ -7,30 +7,30 @@ http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 window.pbkdf2 = function () {
 	// https://github.com/golang/crypto/blob/master/pbkdf2/pbkdf2.go
 	function pbkdf2_js(password, salt, iter, keyLen, hash) {
-		let hashLen;
-		
-		switch (hash.name || hash) {
+		switch ((hash.name || hash).toUpperCase()) {
 			case "SHA1":
-				hashLen = 160 / 8;
+				var hashLen = 160 / 8;
 				break;
 			case "SHA224":
 			case "SHA-224":
-				hashLen = 224 / 8;
+				var hashLen = 224 / 8;
 				break;
 			case "SHA256":
 			case "SHA-256":
-				hashLen = 256 / 8;
+				var hashLen = 256 / 8;
 				break;
 			case "SHA384":
 			case "SHA-384":
-				hashLen = 384 / 8;
+				var hashLen = 384 / 8;
 				break;
 			case "SHA512":
 			case "SHA-512":
-				hashLen = 512 / 8;
+				var hashLen = 512 / 8;
 				break;
 			default:
-				return Promise.reject(new Error("Invalid argument hash"));
+				let err = new Error("A parameter or an operation is not supported by the underlying object");
+				err.name = "InvalidAccessError";
+				return Promise.reject(err);
 		}
 		
 		let numBlocks = ((keyLen + hashLen - 1) / hashLen) | 0;
@@ -91,16 +91,43 @@ window.pbkdf2 = function () {
 					hash: hash
 				}, key, keyLen * 8))
 				.then(key => new Uint8Array(key))
-				.catch(err => (err.name === "OperationError")
-					? (window.pbkdf2 = pbkdf2_js).apply(self, args)
-					: Promise.reject(err));
+				.catch(err =>
+					// PBKDF2-HMAC is not supported by the Web Crytpto API if either a
+					// NotSupportedError or a OperationError are emmited
+					(err.name === "OperationError" || err.name === "NotSupportedError")
+						? (window.pbkdf2 = pbkdf2_js).apply(self, args)
+						// Limited support for PBKDF2-HMAC-SHA exists if InvalidAccessError
+						// is emmited for PBKDF2-HMAC-SHA{256,384,512}
+						: (err.name === "InvalidAccessError")
+							? pbkdf2_js.apply(self, args)
+							: Promise.reject(err));
 		};
 	} else {
 		return function (password, salt, iter, keyLen, hash) {
-			let hashAlg = CryptoJS.algo[hash.name || hash] || CryptoJS.algo[(hash.name || hash).replace("-", "")];
-			
-			if (!hashAlg) {
-				return Promise.reject(new Error("Invalid argument hash"));
+			switch ((hash.name || hash).toUpperCase()) {
+				case "SHA1":
+					var hashAlg = CryptoJS.algo.SHA;
+					break;
+				case "SHA224":
+				case "SHA-224":
+					var hashAlg = CryptoJS.algo.SHA224;
+					break;
+				case "SHA256":
+				case "SHA-256":
+					var hashAlg = CryptoJS.algo.SHA256;
+					break;
+				case "SHA384":
+				case "SHA-384":
+					var hashAlg = CryptoJS.algo.SHA384;
+					break;
+				case "SHA512":
+				case "SHA-512":
+					var hashAlg = CryptoJS.algo.SHA512;
+					break;
+				default:
+					let err = new Error("A parameter or an operation is not supported by the underlying object");
+					err.name = "InvalidAccessError";
+					return Promise.reject(err);
 			}
 			
 			return new Promise(function (resolve, reject) {
