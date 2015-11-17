@@ -86,18 +86,15 @@ mpw-js is a JavaScript + Web Crypto implementation of the Master Password App al
 	// language features and ES5 parsers will hard-fail otherwise
 	
 	// If the ES6 class, let, destructive assignment and rest arguments
-	// are supported, this will be successful and ES6 will be set to true
-	// and esdir to ""
-	class $ES6 { constructor() { let b = true; this.b = b; } }
-	const [ES6, esdir] = ((...args) => args)(new $ES6().b, ``);
+	// are supported, this will be successful and ES6 files will be loaded
+	// rather than the transpiled files
+	class $ES6 { constructor() { let b = ``; this.b = b; } }
+	const [esdir] = ((...args) => args)(new $ES6().b);
 	</script>
 	<script>
-	// If the needed ES6 features aren't supported, ES6 will be set to false
-	// and esdir to "es5/"
-	var ES6 = false, esdir = "es5/";
-	
-	// If ES6 is not supported we must include traceur-runtime.js
-	ES6 || document.write("<script src=traceur-runtime.js><\/script>");
+	// If the needed ES6 features aren't supported the ES6 to ES5
+	// transpiled files will be loaded instead
+	var esdir = "es5/";
 	
 	// If setImmediate is not implemented we include the polyfill
 	window.setImmediate || document.write("<script src=" + esdir + "setImmediate-polyfill.js><\/script>");

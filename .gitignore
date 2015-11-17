@@ -40,7 +40,3 @@ validation-report.json
 # Folders to ignore
 node_modules
 bower_components
-
-# Built files
-*.es5.js
-*.es5.map
