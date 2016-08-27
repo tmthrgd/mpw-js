@@ -213,9 +213,9 @@ class MPW {
 			// Java/masterpassword-algorithm/src/main/java/com/...
 			// lyndir/masterpassword/MasterKeyV0.java#L105
 			seed = seed.then(function (seedBytes) {
-				var seed = new Uint16Array(seedBytes.length);
+				let seed = new Uint16Array(seedBytes.length);
 				
-				for (var i = 0; i < seed.length; i++) {
+				for (let i = 0; i < seed.length; i++) {
 					seed[i] = (seedBytes[i] > 127 ? 0x00ff : 0x0000) | (seedBytes[i] << 8);
 				}
 				
