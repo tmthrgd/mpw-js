@@ -5,7 +5,7 @@
 International License. To view a copy of this license, visit
 http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
-window.scrypt = (function () {
+window.scrypt = function () {
 	// https://github.com/golang/crypto/blob/master/scrypt/scrypt.go
 	function salsaXOR(tmp, inp, out) {
 		var w = [];
@@ -15,7 +15,7 @@ window.scrypt = (function () {
 			x[i] = w[i] = tmp[i] ^ inp[i];
 		}
 
-		for (var i = 0, u; i < 8; i += 2) {
+		for (var _i = 0, u; _i < 8; _i += 2) {
 			u = x[0] + x[12];x[4] ^= u << 7 | u >>> 32 - 7;
 			u = x[4] + x[0];x[8] ^= u << 9 | u >>> 32 - 9;
 			u = x[8] + x[4];x[12] ^= u << 13 | u >>> 32 - 13;
@@ -57,8 +57,8 @@ window.scrypt = (function () {
 			u = x[14] + x[13];x[15] ^= u << 18 | u >>> 32 - 18;
 		}
 
-		for (var i = 0; i < 16; i++) {
-			out[i] = tmp[i] = x[i] + w[i];
+		for (var _i2 = 0; _i2 < 16; _i2++) {
+			out[_i2] = tmp[_i2] = x[_i2] + w[_i2];
 		}
 	}
 
@@ -78,34 +78,34 @@ window.scrypt = (function () {
 			x[i] = bView.getUint32(j, true /*little-endian*/);
 		}
 
-		for (var i = 0; i < N; i += 2) {
-			v.set(x, i * 32 * r);
+		for (var _i3 = 0; _i3 < N; _i3 += 2) {
+			v.set(x, _i3 * 32 * r);
 			blockMix(x, y, r);
 
-			v.set(y, (i + 1) * 32 * r);
+			v.set(y, (_i3 + 1) * 32 * r);
 			blockMix(y, x, r);
 		}
 
-		for (var i = 0, j, sh32 = Math.pow(2, 32); i < N; i += 2) {
-			j = (x[(2 * r - 1) * 16] | x[(2 * r - 1) * 16 + 1] * sh32) & N - 1;
+		for (var _i4 = 0, _j, sh32 = Math.pow(2, 32); _i4 < N; _i4 += 2) {
+			_j = (x[(2 * r - 1) * 16] | x[(2 * r - 1) * 16 + 1] * sh32) & N - 1;
 
 			for (var k = 0; k < x.length; k++) {
-				x[k] ^= v[j * 32 * r + k];
+				x[k] ^= v[_j * 32 * r + k];
 			}
 
 			blockMix(x, y, r);
 
-			j = (y[(2 * r - 1) * 16] | y[(2 * r - 1) * 16 + 1] * sh32) & N - 1;
+			_j = (y[(2 * r - 1) * 16] | y[(2 * r - 1) * 16 + 1] * sh32) & N - 1;
 
-			for (var k = 0; k < y.length; k++) {
-				y[k] ^= v[j * 32 * r + k];
+			for (var _k = 0; _k < y.length; _k++) {
+				y[_k] ^= v[_j * 32 * r + _k];
 			}
 
 			blockMix(y, x, r);
 		}
 
-		for (var i = 0, j = 0; i < x.length; i++, j += 4) {
-			bView.setUint32(j, x[i], true /*little-endian*/);
+		for (var _i5 = 0, _j2 = 0; _i5 < x.length; _i5++, _j2 += 4) {
+			bView.setUint32(_j2, x[_i5], true /*little-endian*/);
 		}
 	}
 
@@ -149,6 +149,6 @@ window.scrypt = (function () {
 			return pbkdf2(passphrase, b, 1, keyLen, "SHA-256");
 		});
 	};
-})();
+}();
 
 //# sourceMappingURL=scrypt.js.map

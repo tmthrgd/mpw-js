@@ -5,7 +5,7 @@ mkdir-es5:
 	mkdir -p es5/lib
 
 es5/%: $*
-	babel $* -o $@ --presets es2015 --source-maps
+	babel $* -o $@ --presets env --source-maps
 
 clean:
 	rm -rf es5 2>/dev/null

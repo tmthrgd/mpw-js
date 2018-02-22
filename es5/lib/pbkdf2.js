@@ -6,7 +6,7 @@ International License. To view a copy of this license, visit
 http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
 // https://bugzilla.mozilla.org/show_bug.cgi?id=554827
-window.pbkdf2 = (function () {
+window.pbkdf2 = function () {
 	// https://github.com/golang/crypto/blob/master/pbkdf2/pbkdf2.go
 	function pbkdf2_js(password, salt, iter, keyLen, hash) {
 		switch ((hash.name || hash).toUpperCase()) {
@@ -107,7 +107,7 @@ window.pbkdf2 = (function () {
 			}).then(function (key) {
 				return new Uint8Array(key);
 			}).catch(function (err) {
-				return(
+				return (
 					// PBKDF2-HMAC is not supported by the Web Crytpto API if either a
 					// NotSupportedError or a OperationError are emmited
 					err.name === "OperationError" || err.name === "NotSupportedError" ? (window.pbkdf2 = pbkdf2_js).apply(self, args)
@@ -177,6 +177,6 @@ window.pbkdf2 = (function () {
 			});
 		};
 	}
-})();
+}();
 
 //# sourceMappingURL=pbkdf2.js.map

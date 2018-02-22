@@ -1,6 +1,6 @@
 "use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -10,10 +10,9 @@ International License. To view a copy of this license, visit
 http://creativecommons.org/licenses/by/4.0/ or see LICENSE. */
 
 // JS Web Crypto implementation of http://masterpasswordapp.com/algorithm.html
-
-var MPW = (function () {
+var MPW = function () {
 	function MPW(name, password) {
-		var version = arguments.length <= 2 || arguments[2] === undefined ? MPW.VERSION : arguments[2];
+		var version = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : MPW.VERSION;
 
 		_classCallCheck(this, MPW);
 
@@ -35,14 +34,16 @@ var MPW = (function () {
 
 	// calculateKey takes ~ 1450.000ms to complete
 
+
 	_createClass(MPW, [{
 		key: "calculateSeed",
 
+
 		// calculateSeed takes ~ 3.000ms to complete + the time of calculateKey once
 		value: function calculateSeed(site) {
-			var counter = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-			var context = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-			var NS = arguments.length <= 3 || arguments[3] === undefined ? MPW.NS : arguments[3];
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+			var NS = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MPW.NS;
 
 			if (!site) {
 				return Promise.reject(new Error("Argument site not present"));
@@ -70,7 +71,7 @@ var MPW = (function () {
 
 				// Create data array and a DataView representing it
 				var data = new Uint8Array(NS.length + 4 /*sizeof(uint32)*/ + site.length + 4 /*sizeof(int32)*/
-				 + (context ? 4 /*sizeof(uint32)*/ + context.length : 0));
+				+ (context ? 4 /*sizeof(uint32)*/ + context.length : 0));
 				var dataView = new DataView(data.buffer, data.byteOffset, data.byteLength);
 				var i = 0;
 
@@ -81,9 +82,9 @@ var MPW = (function () {
 					// Set data[i,i+4] to siteCharLength UINT32 in big-endian form
 					dataView.setUint32(i, siteCharLength, false /*big-endian*/);i += 4 /*sizeof(uint32)*/;
 				} else {
-						// Set data[i,i+4] to site.length UINT32 in big-endian form
-						dataView.setUint32(i, site.length, false /*big-endian*/);i += 4 /*sizeof(uint32)*/;
-					}
+					// Set data[i,i+4] to site.length UINT32 in big-endian form
+					dataView.setUint32(i, site.length, false /*big-endian*/);i += 4 /*sizeof(uint32)*/;
+				}
 
 				// Set data[i,] to site
 				data.set(site, i);i += site.length;
@@ -121,28 +122,28 @@ var MPW = (function () {
 				} /*= seed*/
 				);
 			} else {
-					return this.key.then(function (key) {
-						// Create crypto-js WordArrays from Uint8Arrays data and key
-						data = CryptoJS.lib.WordArray.create(data);
-						key = CryptoJS.lib.WordArray.create(key);
+				return this.key.then(function (key) {
+					// Create crypto-js WordArrays from Uint8Arrays data and key
+					data = CryptoJS.lib.WordArray.create(data);
+					key = CryptoJS.lib.WordArray.create(key);
 
-						// Sign data using HMAC-SHA-256 w/ key
-						return CryptoJS.HmacSHA256(data, key) /*= seed*/;
-					}).then(function (hash) {
-						// Create seed array and a DataView representing it
-						var seed = new Uint8Array(hash.words.length * 4 /*sizeof(int32)*/);
-						var seedView = new DataView(seed.buffer, seed.byteOffset, seed.byteLength);
+					// Sign data using HMAC-SHA-256 w/ key
+					return CryptoJS.HmacSHA256(data, key) /*= seed*/;
+				}).then(function (hash) {
+					// Create seed array and a DataView representing it
+					var seed = new Uint8Array(hash.words.length * 4 /*sizeof(int32)*/);
+					var seedView = new DataView(seed.buffer, seed.byteOffset, seed.byteLength);
 
-						// Loop over hash.words which are INT32
-						for (var i = 0; i < hash.words.length; i++) {
-							// Set seed[i*4,i*4+4] to hash.words[i] INT32 in big-endian form
-							seedView.setInt32(i * 4 /*sizeof(int32)*/, hash.words[i], false /*big-endian*/);
-						}
+					// Loop over hash.words which are INT32
+					for (var _i = 0; _i < hash.words.length; _i++) {
+						// Set seed[i*4,i*4+4] to hash.words[i] INT32 in big-endian form
+						seedView.setInt32(_i * 4 /*sizeof(int32)*/, hash.words[_i], false /*big-endian*/);
+					}
 
-						// Return the seed Uint8Array
-						return seed;
-					});
-				}
+					// Return the seed Uint8Array
+					return seed;
+				});
+			}
 		}
 
 		// generate takes ~ 0.200ms to complete + the time of calculateSeed
@@ -150,10 +151,10 @@ var MPW = (function () {
 	}, {
 		key: "generate",
 		value: function generate(site) {
-			var counter = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-			var context = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-			var template = arguments.length <= 3 || arguments[3] === undefined ? "long" : arguments[3];
-			var NS = arguments.length <= 4 || arguments[4] === undefined ? MPW.NS : arguments[4];
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+			var template = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "long";
+			var NS = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : MPW.NS;
 
 			// Does the requested template exist?
 			if (!(template in MPW.templates)) {
@@ -205,8 +206,8 @@ var MPW = (function () {
 	}, {
 		key: "generatePassword",
 		value: function generatePassword(site) {
-			var counter = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-			var template = arguments.length <= 2 || arguments[2] === undefined ? "long" : arguments[2];
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var template = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "long";
 
 			return this.generate(site, counter, null, template, MPW.PasswordNS);
 		}
@@ -216,8 +217,8 @@ var MPW = (function () {
 	}, {
 		key: "generateLogin",
 		value: function generateLogin(site) {
-			var counter = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-			var template = arguments.length <= 2 || arguments[2] === undefined ? "name" : arguments[2];
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var template = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "name";
 
 			return this.generate(site, counter, null, template, MPW.LoginNS);
 		}
@@ -227,9 +228,9 @@ var MPW = (function () {
 	}, {
 		key: "generateAnswer",
 		value: function generateAnswer(site) {
-			var counter = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-			var context = arguments.length <= 2 || arguments[2] === undefined ? "" : arguments[2];
-			var template = arguments.length <= 3 || arguments[3] === undefined ? "phrase" : arguments[3];
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+			var template = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "phrase";
 
 			return this.generate(site, counter, context, template, MPW.AnswerNS);
 		}
@@ -243,7 +244,7 @@ var MPW = (function () {
 	}], [{
 		key: "calculateKey",
 		value: function calculateKey(name, password) {
-			var version = arguments.length <= 2 || arguments[2] === undefined ? MPW.VERSION : arguments[2];
+			var version = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : MPW.VERSION;
 
 			if (!name || !name.length) {
 				return Promise.reject(new Error("Argument name not present"));
@@ -279,9 +280,9 @@ var MPW = (function () {
 					// Set data[i,i+4] to nameCharLength UINT32 in big-endian form
 					saltView.setUint32(i, nameCharLength, false /*big-endian*/);i += 4 /*sizeof(uint32)*/;
 				} else {
-						// Set salt[i,i+4] to name.length UINT32 in big-endian form
-						saltView.setUint32(i, name.length, false /*big-endian*/);i += 4 /*sizeof(uint32)*/;
-					}
+					// Set salt[i,i+4] to name.length UINT32 in big-endian form
+					saltView.setUint32(i, name.length, false /*big-endian*/);i += 4 /*sizeof(uint32)*/;
+				}
 
 				// Set salt[i,] to name
 				salt.set(name, i);i += name.length;
@@ -319,9 +320,10 @@ var MPW = (function () {
 	}]);
 
 	return MPW;
-})();
+}();
 
 // A TextEncoder in UTF-8 to convert strings to `Uint8Array`s
+
 
 MPW.txtencoder = new TextEncoder();
 
