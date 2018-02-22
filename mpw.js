@@ -243,16 +243,37 @@ class MPW {
 	}
 	
 	// generate a password with the password namespace
+	generateAuthentication(site, counter = 1, context = "", template = "long") {
+		return this.generate(site, counter, context, template, MPW.AuthenticationNS);
+	}
+	
+	// generate a username with the login namespace
+	generateIdentification(site, counter = 1, context = "", template = "name") {
+		return this.generate(site, counter, context, template, MPW.IdentificationNS);
+	}
+	
+	// generate a security answer with the answer namespace
+	generateRecovery(site, counter = 1, context = "", template = "phrase") {
+		return this.generate(site, counter, context, template, MPW.RecoveryNS);
+	}
+	
+	// generate a password with the password namespace
+	//
+	// Deprecated: use generateAuthentication instead.
 	generatePassword(site, counter = 1, template = "long") {
 		return this.generate(site, counter, null, template, MPW.PasswordNS);
 	}
 	
 	// generate a username with the login namespace
+	//
+	// Deprecated: use generateIdentification instead.
 	generateLogin(site, counter = 1, template = "name") {
 		return this.generate(site, counter, null, template, MPW.LoginNS);
 	}
 	
 	// generate a security answer with the answer namespace
+	//
+	// Deprecated: use generateRecovery instead.
 	generateAnswer(site, counter = 1, context = "", template = "phrase") {
 		return this.generate(site, counter, context, template, MPW.AnswerNS);
 	}
@@ -284,9 +305,14 @@ MPW.VERSION = 3;
 MPW.NS = "com.lyndir.masterpassword";
 
 // The namespaces used in calculateSeed
-MPW.PasswordNS = "com.lyndir.masterpassword";
-MPW.LoginNS    = "com.lyndir.masterpassword.login";
-MPW.AnswerNS   = "com.lyndir.masterpassword.answer";
+MPW.AuthenticationNS = "com.lyndir.masterpassword";
+MPW.IdentificationNS = "com.lyndir.masterpassword.login";
+MPW.RecoveryNS       = "com.lyndir.masterpassword.answer";
+
+// Legacy namespaces used in calculateSeed
+MPW.PasswordNS = MPW.AuthenticationNS;
+MPW.LoginNS    = MPW.IdentificationNS;
+MPW.AnswerNS   = MPW.RecoveryNS;
 
 // The templates that passwords may be created from
 // The characters map to MPW.passchars
