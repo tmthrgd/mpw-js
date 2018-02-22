@@ -27,6 +27,7 @@ function updatePassword() {
 	if (!mpw || !sitename.value ||
 		!sitename.validity.valid ||
 		!counter.validity.valid ||
+		!context.validity.valid ||
 		!template.validity.valid ||
 		!type.validity.valid) {
 		return;
@@ -34,12 +35,8 @@ function updatePassword() {
 	
 	var cid = ++id;
 	
-	if (type.value === "answer") {
-		var value = mpw.generateAnswer(sitename.value, counter.valueAsNumber, context.value, template.value);
-	} else {
-		var Type = type.value[0].toUpperCase() + type.value.slice(1).toLowerCase();
-		var value = mpw["generate" + Type](sitename.value, counter.valueAsNumber, template.value);
-	}
+	var Type = type.value[0].toUpperCase() + type.value.slice(1).toLowerCase();
+	var value = mpw["generate" + Type](sitename.value, counter.valueAsNumber, context.value, template.value);
 	
 	value.then(function (pass) {
 		if (cid === id) {
@@ -57,16 +54,14 @@ function updatePassword() {
 function updateType() {
 	resulttype.textContent = type.selectedOptions[0].textContent;
 	
-	context.disabled = type.value !== "answer";
-	
 	switch (type.value) {
-		case "login":
+		case "identification":
 			template.value = "name";
 			break;
-		case "password":
+		case "authentication":
 			template.value = "long";
 			break;
-		case "answer":
+		case "recovery":
 			template.value = "phrase";
 			break;
 	}
@@ -88,7 +83,7 @@ window.addEventListener("load", function () {
 	password       = document.querySelector(".password");
 	error          = document.querySelector(".error");
 	
-	fullname.disabled = masterpassword.disabled = version.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = template.disabled = type.disabled = password.disabled = false;
+	fullname.disabled = masterpassword.disabled = version.disabled = calculatekey.disabled = sitename.disabled = counter.disabled = context.disabled = template.disabled = type.disabled = password.disabled = false;
 	
 	updateMPW();
 	calculatekey.addEventListener("click", updateMPW, false);
