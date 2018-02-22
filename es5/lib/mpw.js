@@ -204,6 +204,44 @@ var MPW = function () {
 		// generate a password with the password namespace
 
 	}, {
+		key: "generateAuthentication",
+		value: function generateAuthentication(site) {
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+			var template = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "long";
+
+			return this.generate(site, counter, context, template, MPW.AuthenticationNS);
+		}
+
+		// generate a username with the login namespace
+
+	}, {
+		key: "generateIdentification",
+		value: function generateIdentification(site) {
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+			var template = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "name";
+
+			return this.generate(site, counter, context, template, MPW.IdentificationNS);
+		}
+
+		// generate a security answer with the answer namespace
+
+	}, {
+		key: "generateRecovery",
+		value: function generateRecovery(site) {
+			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+			var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+			var template = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "phrase";
+
+			return this.generate(site, counter, context, template, MPW.RecoveryNS);
+		}
+
+		// generate a password with the password namespace
+		//
+		// Deprecated: use generateAuthentication instead.
+
+	}, {
 		key: "generatePassword",
 		value: function generatePassword(site) {
 			var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
@@ -213,6 +251,8 @@ var MPW = function () {
 		}
 
 		// generate a username with the login namespace
+		//
+		// Deprecated: use generateIdentification instead.
 
 	}, {
 		key: "generateLogin",
@@ -224,6 +264,8 @@ var MPW = function () {
 		}
 
 		// generate a security answer with the answer namespace
+		//
+		// Deprecated: use generateRecovery instead.
 
 	}, {
 		key: "generateAnswer",
@@ -334,9 +376,14 @@ MPW.VERSION = 3;
 MPW.NS = "com.lyndir.masterpassword";
 
 // The namespaces used in calculateSeed
-MPW.PasswordNS = "com.lyndir.masterpassword";
-MPW.LoginNS = "com.lyndir.masterpassword.login";
-MPW.AnswerNS = "com.lyndir.masterpassword.answer";
+MPW.AuthenticationNS = "com.lyndir.masterpassword";
+MPW.IdentificationNS = "com.lyndir.masterpassword.login";
+MPW.RecoveryNS = "com.lyndir.masterpassword.answer";
+
+// Legacy namespaces used in calculateSeed
+MPW.PasswordNS = MPW.AuthenticationNS;
+MPW.LoginNS = MPW.IdentificationNS;
+MPW.AnswerNS = MPW.RecoveryNS;
 
 // The templates that passwords may be created from
 // The characters map to MPW.passchars
