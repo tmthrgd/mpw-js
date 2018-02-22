@@ -56,6 +56,12 @@ window.ghcallback = function ghcallback(response) {
 	
 	var mpws = { };
 	
+	var purposeMap = {
+		"Authentication": "Password",
+		"Identification": "Login",
+		"Recovery":       "Answer",
+	};
+	
 	Promise.all(tests.map(function runTest(testCase) {
 		testCase = cases[testCase];
 		
@@ -71,12 +77,15 @@ window.ghcallback = function ghcallback(response) {
 		var mpwKey = ["v" + testCase.algorithm, testCase.fullName.length, testCase.fullName, testCase.masterPassword.length, testCase.masterPassword].join("$");
 		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.fullName, testCase.masterPassword, testCase.algorithm));
 		
-		var template = testCase.siteType.replace(/^Generated/, "").toLowerCase();
+		var template = testCase.resultType.toLowerCase();
+		var func = "generate" + purposeMap[testCase.keyPurpose];
 		
-		if (testCase.siteVariant === "Answer") {
+		if (func === "generateAnswer") {
 			var value = mpw.generateAnswer(testCase.siteName, Number.parseInt(testCase.siteCounter), testCase.siteContext, template);
+		} else if (func in mpw) {
+			var value = mpw[func](testCase.siteName, Number.parseInt(testCase.siteCounter), template);
 		} else {
-			var value = mpw["generate" + testCase.siteVariant](testCase.siteName, Number.parseInt(testCase.siteCounter), template);
+			var value = Promise.reject("unknown keyPurpose: " + testCase.keyPurpose)
 		}
 		
 		return value.then(function (pass) {
