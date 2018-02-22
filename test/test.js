@@ -81,7 +81,7 @@ window.ghcallback = function ghcallback(response) {
 		var func = "generate" + purposeMap[testCase.keyPurpose];
 		
 		if (func === "generateAnswer") {
-			var value = mpw.generateAnswer(testCase.siteName, Number.parseInt(testCase.siteCounter), testCase.siteContext, template);
+                       var value = mpw.generateAnswer(testCase.siteName, Number.parseInt(testCase.siteCounter), testCase.keyContext, template);
 		} else if (func in mpw) {
 			var value = mpw[func](testCase.siteName, Number.parseInt(testCase.siteCounter), template);
 		} else {
