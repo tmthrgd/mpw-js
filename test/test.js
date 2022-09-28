@@ -42,7 +42,7 @@ window.ghcallback = function ghcallback(response) {
 	}
 	
 	var tests = Object.keys(cases).filter(function alg(testCase) {
-		return cases[testCase].algorithm && cases[testCase].result;
+		return cases[testCase].algorithm >= 0 && cases[testCase].result;
 	});
 	
 	var passed = document.querySelector(".num.passed");
@@ -68,14 +68,14 @@ window.ghcallback = function ghcallback(response) {
 		test.textContent = "Test " + testCase.testID + " Running";
 		testsDiv.appendChild(test);
 		
-		var mpwKey = ["v" + testCase.algorithm, testCase.fullName.length, testCase.fullName, testCase.masterPassword.length, testCase.masterPassword].join("$");
-		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.fullName, testCase.masterPassword, testCase.algorithm));
+		var mpwKey = ["v" + testCase.algorithm, testCase.userName.length, testCase.userName, testCase.userSecret.length, testCase.userSecret].join("$");
+		var mpw = mpws[mpwKey] || (mpws[mpwKey] = new MPW(testCase.userName, testCase.userSecret, testCase.algorithm));
 		
 		var template = testCase.resultType.toLowerCase();
 		var func = "generate" + testCase.keyPurpose;
 		
 		if (func in mpw) {
-			var value = mpw[func](testCase.siteName, Number.parseInt(testCase.siteCounter), testCase.keyContext, template);
+			var value = mpw[func](testCase.siteName, Number.parseInt(testCase.keyCounter), testCase.keyContext, template);
 		} else {
 			var value = Promise.reject("unknown keyPurpose: " + testCase.keyPurpose)
 		}
