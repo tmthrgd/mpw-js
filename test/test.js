@@ -42,7 +42,8 @@ window.ghcallback = function ghcallback(response) {
 	}
 	
 	var tests = Object.keys(cases).filter(function alg(testCase) {
-		return cases[testCase].algorithm >= 0 && cases[testCase].result;
+		testCase = cases[testCase];
+		return testCase.algorithm >= 0 && testCase.result && testCase.resultType.toLowerCase() != "personal";
 	});
 	
 	var passed = document.querySelector(".num.passed");
